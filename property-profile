@@ -760,6 +760,7 @@
 </head>
 <body>
     <div class="dashboard-container">
+        <!-- Header -->
         <header class="dashboard-header">
             <div>
                 <div class="header-brand">WINDFIELD REAL ESTATE | PROPERTY INTELLIGENCE</div>
@@ -779,6 +780,7 @@
             </div>
         </header>
         
+        <!-- Navigation -->
         <nav class="nav-tabs">
             <button class="nav-tab active" data-tab="overview">Overview</button>
             <button class="nav-tab" data-tab="performance">Performance</button>
@@ -789,6 +791,7 @@
             <button class="nav-tab" data-tab="journey">Journey</button>
         </nav>
         
+        <!-- OVERVIEW TAB -->
         <div id="overview" class="tab-content active">
             <div class="grid-6" style="margin-bottom: 24px;">
                 <div class="kpi-card high">
@@ -832,6 +835,7 @@
             </div>
         </div>
         
+        <!-- PERFORMANCE TAB -->
         <div id="performance" class="tab-content">
             <div class="grid-2">
                 <div class="panel">
@@ -891,6 +895,7 @@
             </div>
         </div>
         
+        <!-- TRADE AREA TAB -->
         <div id="tradearea" class="tab-content">
             <div class="grid-2">
                 <div class="panel">
@@ -928,6 +933,7 @@
             </div>
         </div>
         
+        <!-- DEMOGRAPHICS TAB -->
         <div id="demographics" class="tab-content">
             <div class="grid-2">
                 <div class="panel">
@@ -966,6 +972,7 @@
             </div>
         </div>
         
+        <!-- TRENDS TAB -->
         <div id="trends" class="tab-content">
             <div class="panel">
                 <h3 class="panel-title">12-Month Sales Trend</h3>
@@ -1004,6 +1011,7 @@
             </div>
         </div>
         
+        <!-- STRATEGIC TAB -->
         <div id="strategic" class="tab-content">
             <div class="grid-2">
                 <div class="panel">
@@ -1153,6 +1161,7 @@
             </div>
         </div>
         
+        <!-- JOURNEY TAB -->
         <div id="journey" class="tab-content">
             <div class="panel">
                 <h3 class="panel-title" style="text-align: center;">Customer Shopping Journey Flow</h3>
@@ -1286,6 +1295,7 @@
             </div>
         </div>
         
+        <!-- Footer -->
         <footer class="dashboard-footer">
             <div style="margin-bottom: 4px;"><strong>WINDFIELD REAL ESTATE</strong> | Property Intelligence Platform</div>
             <div>Data Sources: CenterCheck, CoStar, Google Maps | Methodology: Evergreen Normalization Framework</div>
