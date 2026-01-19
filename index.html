@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Selection Toolkit | 12-Step Framework</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'DM Sans', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .step-card { transition: all 0.3s ease; }
+    .step-card:hover { transform: translateY(-2px); }
+    .expand-content { animation: slideDown 0.3s ease-out; }
+    @keyframes slideDown {
+      from { opacity: 0; max-height: 0; }
+      to { opacity: 1; max-height: 8000px; }
+    }
+    .nav-item.active { background: linear-gradient(135deg, #EBF5FF 0%, #E0F2FE 100%); }
+    .phase-badge { font-size: 10px; letter-spacing: 0.5px; }
+    .progress-bar { transition: width 0.15s ease; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+    .gradient-text { background: linear-gradient(135deg, #1E40AF 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .example-table { font-size: 12px; }
+    .example-table th { background: #f8fafc; font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+    .example-table td, .example-table th { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+    .example-table tr:last-child td { border-bottom: none; }
+    .example-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+  <!-- Progress Bar -->
+  <div id="progressBar" class="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+    <div class="progress-bar h-full bg-gradient-to-r from-blue-600 to-emerald-500" style="width: 0%"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-1 z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-emerald-500 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-gray-800">Site Selection Toolkit</h1>
+            <p class="text-xs text-gray-500">12-Step Data-Driven Framework</p>
+          </div>
+        </div>
+        
+        <!-- Desktop Nav -->
+        <nav id="desktopNav" class="hidden md:flex items-center gap-1">
+          <button onclick="showSection('overview')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="overview">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            Overview
+          </button>
+          <button onclick="showSection('process')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="process">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            12-Step Process
+          </button>
+          <button onclick="showSection('maps')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="maps">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            Map Catalog
+          </button>
+          <button onclick="showSection('formulas')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="formulas">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            Formulas
+          </button>
+          <button onclick="showSection('principles')" class="nav-item flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="principles">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            Principles
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+          <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Mobile Nav -->
+      <nav id="mobileNav" class="hidden md:hidden pt-3 pb-2 border-t border-gray-100 mt-3 space-y-1">
+        <button onclick="showSection('overview'); toggleMobileMenu();" class="nav-item flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="overview">Overview</button>
+        <button onclick="showSection('process'); toggleMobileMenu();" class="nav-item flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="process">12-Step Process</button>
+        <button onclick="showSection('maps'); toggleMobileMenu();" class="nav-item flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="maps">Map Catalog</button>
+        <button onclick="showSection('formulas'); toggleMobileMenu();" class="nav-item flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="formulas">Formulas</button>
+        <button onclick="showSection('principles'); toggleMobileMenu();" class="nav-item flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all" data-section="principles">Principles</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Overview Section -->
+    <section id="section-overview" class="space-y-8">
+      <!-- Hero -->
+      <div class="text-center py-12">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-6">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          Transforming Abstract Numbers into Decision-Grade Insight
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Comprehensive Retail<br /><span class="gradient-text">Site Selection Framework</span>
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+          A 12-step process for data-driven location intelligence, reverse-engineered from real-world retail sales performance analysis and competitive expansion strategies.
+        </p>
+        <button onclick="showSection('process')" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all">
+          Explore the Framework
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+      </div>
+
+      <!-- Process Flow Visual -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 overflow-x-auto">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Framework Overview</h2>
+        <div class="flex gap-2 min-w-max pb-2">
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #1E3A5F">Foundation</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2"><div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">1. Market Definition</div></div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #2E7D32">Data Collection</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2 space-y-1">
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">2. Competitive Intel</div>
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">3. Trade Area</div>
+            </div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #7B1FA2">Analysis</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2 space-y-1">
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">4. Demographics</div>
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">5. Journey Mapping</div>
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">6. Normalization</div>
+            </div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #C62828">Strategy</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2 space-y-1">
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">7. Positioning</div>
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">8. Screening</div>
+            </div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #1565C0">Financial</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2"><div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">9. Revenue Model</div></div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #FF6F00">Decision</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2 space-y-1">
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">10. Site Scoring</div>
+              <div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">11. Cannibalization</div>
+            </div>
+          </div>
+          <div class="flex-1 min-w-[100px]">
+            <div class="text-xs font-bold text-white text-center py-1 rounded-t-lg" style="background-color: #263238">Execution</div>
+            <div class="border border-t-0 border-gray-200 rounded-b-lg p-2"><div class="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">12. Implementation</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Principles Grid -->
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Core Principles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="principlesGrid"></div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-5 text-white">
+          <div class="text-3xl font-bold">12</div>
+          <div class="text-sm opacity-80">Strategic Steps</div>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-5 text-white">
+          <div class="text-3xl font-bold">17+</div>
+          <div class="text-sm opacity-80">Map Visualizations</div>
+        </div>
+        <div class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white">
+          <div class="text-3xl font-bold">50+</div>
+          <div class="text-sm opacity-80">Data Points</div>
+        </div>
+        <div class="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-5 text-white">
+          <div class="text-3xl font-bold">6</div>
+          <div class="text-sm opacity-80">Key Formulas</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="section-process" class="hidden space-y-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">12-Step Process</h2>
+          <p class="text-gray-600">Click any step to expand detailed methodology with real-world examples</p>
+        </div>
+      </div>
+      <div id="stepsContainer"></div>
+    </section>
+
+    <!-- Maps Section -->
+    <section id="section-maps" class="hidden space-y-6">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Interactive Map Catalog</h2>
+        <p class="text-gray-600">Visualizations that show how money and people move through space</p>
+      </div>
+      <div id="mapCatalogContainer"></div>
+    </section>
+
+    <!-- Formulas Section -->
+    <section id="section-formulas" class="hidden space-y-6">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Key Formulas & Calculations</h2>
+        <p class="text-gray-600">Essential equations for site selection analysis</p>
+      </div>
+      <div id="formulasContainer"></div>
+    </section>
+
+    <!-- Principles Section -->
+    <section id="section-principles" class="hidden space-y-6">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Guiding Principles</h2>
+        <p class="text-gray-600">The foundational wisdom behind successful site selection</p>
+      </div>
+      <div id="principlesContainer"></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 bg-white mt-12">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <div class="text-center text-gray-500 text-sm">
+        <p class="font-medium text-gray-700 mb-1">Comprehensive Retail Site Selection Framework</p>
+        <p>Reverse-engineered from Retail Sales Performance Analysis & Dutch Brothers Omaha Expansion Strategy</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Data with Example Outputs
+    const steps = [
+      { 
+        id: 1, 
+        title: "Market Definition & Boundary Setting", 
+        color: "#1E3A5F", 
+        phase: "Foundation", 
+        keyAction: "Define the geographic market boundaries and establish the analysis perimeter for site selection", 
+        targetedInsight: "Where does the addressable market begin and end? What is the competitive landscape footprint?", 
+        input: "Target market geography, existing brand footprint, competitor location inventory, population centers, major traffic corridors", 
+        output: "Defined market boundary polygon, list of municipalities/counties included, primary and secondary market zones", 
+        deliverable: "Market Boundary Map with zone classifications (Core Market, Expansion Market, Watch Market)", 
+        directive: "Establish clear geographic parameters before any analysis begins. Define both the competitive market and the addressable market.", 
+        objective: "Create a defensible, data-driven market definition that guides all subsequent analysis", 
+        definition: "Market Definition establishes the geographic, demographic, and competitive boundaries within which site selection decisions will be made.", 
+        visualLogic: "The market boundary creates the canvas upon which all other analysis layers will be painted.", 
+        mapType: "Choropleth with Boundary Overlay", 
+        bestFor: "Initial stakeholder alignment, establishing analysis scope",
+        exampleOutput: {
+          title: "Omaha Metro Market Definition",
+          description: "Dutch Brothers Coffee expansion into Nebraska market",
+          data: [
+            { zone: "Core Market", areas: "Douglas County, Sarpy County", population: "742,000", households: "298,000", priority: "Immediate" },
+            { zone: "Expansion Market", areas: "Washington County, Saunders County", population: "68,000", households: "26,000", priority: "Phase 2" },
+            { zone: "Watch Market", areas: "Pottawattamie County (IA)", population: "93,000", households: "37,000", priority: "Monitor" }
+          ],
+          summary: "Total addressable market: 903,000 population | 361,000 households | 48 existing Starbucks locations identified as competitive proxy"
+        }
+      },
+      { 
+        id: 2, 
+        title: "Competitive Intelligence Gathering", 
+        color: "#2E7D32", 
+        phase: "Data Collection", 
+        keyAction: "Compile comprehensive competitor location inventory and obtain transaction-level performance data for proxy analysis", 
+        targetedInsight: "Where are competitors located, how are they performing, and what does their success/failure tell us about market demand?", 
+        input: "Competitor brand list, location databases, CenterCheck or similar transaction data reports, store format classifications", 
+        output: "Complete competitor location database with coordinates, performance metrics (sales, transactions, YoY growth), brand rank percentiles", 
+        deliverable: "Competitor Performance Database with 15+ data points per location", 
+        directive: "Gather data from at least 8-10 comparable competitor locations to establish statistical validity.", 
+        objective: "Build a comprehensive competitive intelligence foundation that validates market demand", 
+        definition: "Systematic collection of competitor location and performance data that serves as a proxy for understanding market potential.", 
+        visualLogic: "Competitor data serves as the 'validation layer' - if competitors are thriving, that validates demand.", 
+        mapType: "Multi-Variable Bubble Map", 
+        bestFor: "Executive overview of competitive landscape",
+        exampleOutput: {
+          title: "Starbucks Performance Data (Top 5 Omaha Locations)",
+          description: "CenterCheck transaction data analysis",
+          data: [
+            { location: "156th & Maple", cardSales: "$2,847,000", yoyGrowth: "+12.4%", transactions: "186,000", aov: "$15.31", stateRank: "94th" },
+            { location: "132nd & Center", cardSales: "$2,612,000", yoyGrowth: "+8.7%", transactions: "171,000", aov: "$15.28", stateRank: "91st" },
+            { location: "168th & Q St", cardSales: "$2,489,000", yoyGrowth: "+15.2%", transactions: "162,000", aov: "$15.36", stateRank: "89th" },
+            { location: "72nd & Dodge", cardSales: "$2,234,000", yoyGrowth: "-2.1%", transactions: "158,000", aov: "$14.14", stateRank: "82nd" },
+            { location: "Saddle Creek", cardSales: "$2,891,000", yoyGrowth: "+4.3%", transactions: "201,000", aov: "$14.38", stateRank: "96th" }
+          ],
+          summary: "48 Starbucks analyzed | Average card sales: $1.92M | Top performer: Saddle Creek ($2.89M) | 67% showing positive YoY growth"
+        }
+      },
+      { 
+        id: 3, 
+        title: "Trade Area Analysis", 
+        color: "#0277BD", 
+        phase: "Data Collection", 
+        keyAction: "Map the geographic capture zones for each competitor location and analyze sales concentration patterns", 
+        targetedInsight: "How far do customers travel to reach each location? Where is demand concentrated vs. diffuse?", 
+        input: "Sales by zip code data, zip code boundary shapefiles, road network data, competitor coordinates", 
+        output: "Trade area polygons for each location, sales concentration heat maps, drive-time isochrone overlays", 
+        deliverable: "Trade Area Comparison Report showing geographic reach and concentration risk scores", 
+        directive: "Calculate trade area metrics: Number of active zip codes, Sales concentration in top zip, Sales per zip code efficiency.", 
+        objective: "Understand the spatial economics of each location - where customers come from and how far they travel", 
+        definition: "Examination of geographic zones from which a retail location draws its customers.", 
+        visualLogic: "Trade areas reveal the 'pull' of each location - destination vs. convenience-driven.", 
+        mapType: "Choropleth with 3D Extrusion", 
+        bestFor: "Understanding geographic sales patterns",
+        exampleOutput: {
+          title: "Trade Area Classification by Location",
+          description: "Sales concentration and geographic reach analysis",
+          data: [
+            { location: "156th & Maple", zipCodes: "8", topZipPct: "34.2%", classification: "Regional Draw", riskLevel: "Low" },
+            { location: "Saddle Creek", zipCodes: "12", topZipPct: "22.1%", classification: "Diffuse", riskLevel: "Very Low" },
+            { location: "North Platte", zipCodes: "2", topZipPct: "83.4%", classification: "Hyper-Local", riskLevel: "High" },
+            { location: "132nd & Center", zipCodes: "6", topZipPct: "41.8%", classification: "Concentrated", riskLevel: "Moderate" },
+            { location: "72nd & Dodge", zipCodes: "9", topZipPct: "28.6%", classification: "Regional Draw", riskLevel: "Low" }
+          ],
+          summary: "Key insight: Locations with >60% concentration in one zip code show 23% higher volatility in sales performance"
+        }
+      },
+      { 
+        id: 4, 
+        title: "Demographic Profiling", 
+        color: "#7B1FA2", 
+        phase: "Analysis", 
+        keyAction: "Extract and compare shopper demographics vs. resident demographics to identify target customer profiles", 
+        targetedInsight: "Who actually shops at successful locations? Does shopper profile match or diverge from local population?", 
+        input: "CenterCheck demographic data, Census demographic data, location performance metrics", 
+        output: "Demographic comparison matrices, shopper vs. resident variance scores, demographic-performance correlation analysis", 
+        deliverable: "Demographic Alignment Report with target customer profile and market fit scores", 
+        directive: "Compare shopper demographics to resident demographics across 4 dimensions: Age, Income, Gender, Ethnicity.", 
+        objective: "Build a data-driven target customer profile and identify markets with proven success patterns", 
+        definition: "Analysis of customer characteristics to identify the ideal customer profile and assess market fit.", 
+        visualLogic: "Demographics explain WHY locations perform differently.", 
+        mapType: "Bivariate Choropleth with Alert Flags", 
+        bestFor: "Identifying underserved customer segments",
+        exampleOutput: {
+          title: "Shopper vs. Resident Demographic Comparison",
+          description: "Saddle Creek location - punching above weight analysis",
+          data: [
+            { metric: "Median HH Income", shoppers: "$94,200", residents: "$72,400", variance: "+30.1%", insight: "Attracts higher income" },
+            { metric: "Age 25-44", shoppers: "48.2%", residents: "31.6%", variance: "+52.5%", insight: "Younger skew" },
+            { metric: "College Educated", shoppers: "67.3%", residents: "44.1%", variance: "+52.6%", insight: "Education premium" },
+            { metric: "Female", shoppers: "58.4%", residents: "51.2%", variance: "+14.1%", insight: "Female skew" }
+          ],
+          summary: "Saddle Creek attracts shoppers with 30% higher income than local residents despite being in a middle-income area - indicates strong brand pull factor"
+        }
+      },
+      { 
+        id: 5, 
+        title: "Customer Journey Mapping", 
+        color: "#E65100", 
+        phase: "Analysis", 
+        keyAction: "Analyze cardholder spend journeys to understand where customers shop before and after visiting each location", 
+        targetedInsight: "What is the shopping context? Is this a standalone trip or part of a broader shopping journey?", 
+        input: "Cardholder spend journey data, retailer category classifications, co-tenant location data", 
+        output: "Customer journey flow diagrams, co-shopping percentages, trip chain analysis", 
+        deliverable: "Customer Journey Analysis showing trip type classification and optimal co-tenancy recommendations", 
+        directive: "Extract journey data to classify each location by trip type: DESTINATION (>90% standalone) vs. TRIP-CHAIN (>10% co-shopping).", 
+        objective: "Understand the shopping context that drives visits and identify optimal co-tenancy strategies", 
+        definition: "Analysis of sequential shopping behavior to understand how visits fit within broader consumer trip patterns.", 
+        visualLogic: "Journey data reveals invisible connections between retailers.", 
+        mapType: "Sankey Diagram Overlaid on Map", 
+        bestFor: "Understanding customer shopping context",
+        exampleOutput: {
+          title: "Customer Journey Flow Analysis",
+          description: "156th & Dodge Starbucks - where customers shop before/after",
+          data: [
+            { direction: "Before Visit", retailer: "Hy-Vee Grocery", percentage: "18.4%", category: "Grocery" },
+            { direction: "Before Visit", retailer: "Target", percentage: "12.1%", category: "Mass Merchant" },
+            { direction: "After Visit", retailer: "Costco", percentage: "8.7%", category: "Warehouse" },
+            { direction: "After Visit", retailer: "Standalone Trip", percentage: "58.2%", category: "Destination" }
+          ],
+          summary: "Trip Classification: CONVENIENCE (41.8% co-shopping rate) | Optimal co-tenants: Grocery anchors, mass merchants | Site strategy: Balance traffic exposure with retail synergy"
+        }
+      },
+      { 
+        id: 6, 
+        title: "Data Normalization & Benchmarking", 
+        color: "#00695C", 
+        phase: "Analysis", 
+        keyAction: "Normalize raw performance data to enable apples-to-apples comparison across different markets", 
+        targetedInsight: "Which locations are truly outperforming given their market context?", 
+        input: "Raw sales/transaction data, trade area population, number of zip codes served, store square footage", 
+        output: "Normalized performance metrics (Sales Per Capita, Sales Per Zip, Transaction Density)", 
+        deliverable: "Normalized Performance Dashboard with location rankings by efficiency metrics", 
+        directive: "Calculate minimum 5 normalization metrics for each location. Rank locations by each metric.", 
+        objective: "Enable fair comparison across disparate market contexts and identify true outperformers", 
+        definition: "Mathematical transformation of raw metrics into comparable units.", 
+        visualLogic: "Raw numbers lie. Normalization reveals the truth behind the numbers.", 
+        mapType: "Scatter Plot Overlaid on Geographic Map", 
+        bestFor: "Identifying true efficiency leaders",
+        exampleOutput: {
+          title: "Normalized Performance Rankings",
+          description: "Efficiency metrics reveal hidden outperformers",
+          data: [
+            { location: "North Platte", rawSales: "$1,247,000", salesPerCapita: "$52.18", rank: "1st", insight: "Rural destination efficiency" },
+            { location: "Saddle Creek", rawSales: "$2,891,000", salesPerCapita: "$38.42", rank: "3rd", insight: "Strong urban performer" },
+            { location: "156th & Maple", rawSales: "$2,847,000", salesPerCapita: "$31.24", rank: "7th", insight: "High volume, lower efficiency" },
+            { location: "72nd & Dodge", rawSales: "$2,234,000", salesPerCapita: "$24.16", rank: "12th", insight: "Below benchmark" }
+          ],
+          summary: "Key finding: North Platte generates 71% higher sales per capita despite 57% lower raw sales - demonstrates importance of normalization"
+        }
+      },
+      { 
+        id: 7, 
+        title: "Competitive Positioning Strategy", 
+        color: "#C62828", 
+        phase: "Strategy", 
+        keyAction: "Analyze competitor proximity patterns to determine optimal distance from existing competitors", 
+        targetedInsight: "How close is too close? What is the 'Goldilocks zone' of competitor proximity?", 
+        input: "Competitor coordinates, performance data by proximity band, brand-specific co-location history", 
+        output: "Optimal proximity ranges by competitor type, competitive pressure scores", 
+        deliverable: "Competitive Positioning Map with proximity bands and recommended placement zones", 
+        directive: "Analyze historical performance by competitor proximity: <0.5 mile = High pressure; 1.0-1.5 miles = Optimal (SWEET SPOT).", 
+        objective: "Determine strategic positioning that validates market demand while maintaining differentiation", 
+        definition: "Deliberate selection of location proximity to competitors based on how distance affects performance.", 
+        visualLogic: "Strategic proximity validates demand while creating differentiation opportunity.", 
+        mapType: "Concentric Ring Buffer Map", 
+        bestFor: "Strategic site placement decisions",
+        exampleOutput: {
+          title: "Optimal Starbucks Proximity Analysis",
+          description: "Dutch Brothers positioning strategy based on competitor performance",
+          data: [
+            { distance: "<0.5 miles", locations: "12", avgPerformance: "-8.2%", pressure: "Very High", recommendation: "Avoid" },
+            { distance: "0.5-1.0 miles", locations: "18", avgPerformance: "+2.4%", pressure: "High", recommendation: "Selective" },
+            { distance: "1.0-1.5 miles", locations: "24", avgPerformance: "+11.7%", pressure: "Optimal", recommendation: "Target Zone" },
+            { distance: "1.5-2.0 miles", locations: "15", avgPerformance: "+6.3%", pressure: "Moderate", recommendation: "Acceptable" },
+            { distance: ">2.0 miles", locations: "8", avgPerformance: "-3.1%", pressure: "Low", recommendation: "Unvalidated" }
+          ],
+          summary: "SWEET SPOT: 1.0-1.5 miles from nearest Starbucks | Validates demand without direct competition | 11.7% average outperformance"
+        }
+      },
+      { 
+        id: 8, 
+        title: "Site Identification & Screening", 
+        color: "#4527A0", 
+        phase: "Strategy", 
+        keyAction: "Apply location criteria filters to identify potential sites and screen based on primary requirements", 
+        targetedInsight: "Which specific parcels meet minimum requirements for consideration?", 
+        input: "Commercial real estate listings, zoning maps, traffic count data, parcel data", 
+        output: "Qualified site inventory with basic metrics, disqualified sites with rejection reasons", 
+        deliverable: "Site Screening Matrix showing all potential sites with pass/fail status on each criterion", 
+        directive: "Apply minimum threshold filters: Zoning permits use, Traffic count meets minimum (20,000+ VPD), Lot size, Competitive proximity.", 
+        objective: "Efficiently narrow the universe of potential sites to a manageable pipeline", 
+        definition: "Systematic process of discovering potential locations and filtering through minimum qualification criteria.", 
+        visualLogic: "Screening prevents wasted analysis effort. The funnel must narrow efficiently.", 
+        mapType: "Filtered Point Map with Pass/Fail Coloring", 
+        bestFor: "Pipeline management",
+        exampleOutput: {
+          title: "Site Screening Funnel Results",
+          description: "Omaha market - 47 sites evaluated",
+          data: [
+            { criterion: "Traffic (20K+ VPD)", passed: "38", failed: "9", passRate: "80.9%" },
+            { criterion: "Zoning (Drive-thru OK)", passed: "31", failed: "7", passRate: "81.6%" },
+            { criterion: "Lot Size (0.5+ acres)", passed: "24", failed: "7", passRate: "77.4%" },
+            { criterion: "Starbucks Proximity (0.5-2.0mi)", passed: "18", failed: "6", passRate: "75.0%" },
+            { criterion: "Income ($60K+ MHI)", passed: "15", failed: "3", passRate: "83.3%" }
+          ],
+          summary: "Final qualified pipeline: 15 sites (31.9% pass rate) | Top rejection reason: Zoning restrictions on drive-through"
+        }
+      },
+      { 
+        id: 9, 
+        title: "Revenue Projection Modeling", 
+        color: "#1565C0", 
+        phase: "Financial", 
+        keyAction: "Build revenue projections for qualified sites using competitor performance data as proxy", 
+        targetedInsight: "What annual revenue can each site realistically generate?", 
+        input: "Competitor performance data, translation factors, site-specific traffic counts, demographic multipliers", 
+        output: "Year 1, Year 2, Year 3 revenue projections for each site, projection confidence levels", 
+        deliverable: "Revenue Projection Model with sensitivity analysis showing upside/downside scenarios", 
+        directive: "Apply the Translation Factor method: Client National Avg ÷ Competitor National Avg × Local Performance × Adjustments.", 
+        objective: "Provide defensible revenue projections that support investment decisions", 
+        definition: "Translation of competitor performance data into expected client performance.", 
+        visualLogic: "Revenue projections transform site analysis from subjective preference to financial decision-making.", 
+        mapType: "Graduated Symbol Map with Revenue Coloring", 
+        bestFor: "Investment prioritization",
+        exampleOutput: {
+          title: "Revenue Projections - Top 5 Sites",
+          description: "Dutch Brothers Omaha expansion forecast",
+          data: [
+            { site: "156th & Maple", year1: "$1,532,000", year2: "$1,741,000", year3: "$1,950,000", confidence: "High", roi: "34.2%" },
+            { site: "132nd & L St", year1: "$1,487,000", year2: "$1,690,000", year3: "$1,893,000", confidence: "High", roi: "31.8%" },
+            { site: "168th & Harrison", year1: "$1,423,000", year2: "$1,617,000", year3: "$1,811,000", confidence: "Medium", roi: "28.4%" },
+            { site: "Gretna Outlet Mall", year1: "$1,356,000", year2: "$1,541,000", year3: "$1,726,000", confidence: "Medium", roi: "25.7%" },
+            { site: "84th & Q St", year1: "$1,298,000", year2: "$1,475,000", year3: "$1,652,000", confidence: "High", roi: "23.1%" }
+          ],
+          summary: "Translation Factor: 0.67 (Dutch Bros avg vs. Starbucks avg) | Market Maturity: Y1=88%, Y2=100%, Y3=112% | Seasonal adj: 0.94 (Omaha winter)"
+        }
+      },
+      { 
+        id: 10, 
+        title: "Weighted Site Scoring", 
+        color: "#FF6F00", 
+        phase: "Decision", 
+        keyAction: "Apply a weighted multi-criteria scoring framework to rank all qualified sites", 
+        targetedInsight: "When all factors are considered with appropriate weighting, which sites rise to the top?", 
+        input: "All normalized metrics, revenue projections, qualitative assessments, strategic factors", 
+        output: "Composite scores (0-100) for each site, component score breakdowns, tier classifications", 
+        deliverable: "Site Ranking Report with scored comparison matrix and tier recommendations", 
+        directive: "Apply weighted scoring: YoY Growth 25%, AOV 20%, Brand Rank 20%, Customer Growth 15%, Trade Area 10%, Concentration 10%.", 
+        objective: "Produce a defensible, quantitative site ranking that balances multiple success factors", 
+        definition: "Mathematical combination of multiple performance metrics into a single composite score.", 
+        visualLogic: "Scoring synthesizes complexity into actionable rankings.", 
+        mapType: "Dynamic Scoring Map with Adjustable Weights", 
+        bestFor: "Stakeholder decision workshops",
+        exampleOutput: {
+          title: "Composite Site Scoring Matrix",
+          description: "Weighted ranking of top 5 qualified sites",
+          data: [
+            { site: "156th & Maple", growth: "92", aov: "88", rank: "94", custGrowth: "86", tradeArea: "78", composite: "89.2", tier: "1A" },
+            { site: "132nd & L St", growth: "87", aov: "85", rank: "91", custGrowth: "82", tradeArea: "81", composite: "86.1", tier: "1A" },
+            { site: "168th & Harrison", growth: "94", aov: "79", rank: "86", custGrowth: "88", tradeArea: "72", composite: "84.7", tier: "1B" },
+            { site: "84th & Q St", growth: "78", aov: "82", rank: "88", custGrowth: "75", tradeArea: "85", composite: "81.3", tier: "1B" },
+            { site: "Gretna Outlet", growth: "71", aov: "76", rank: "79", custGrowth: "69", tradeArea: "88", composite: "74.6", tier: "2" }
+          ],
+          summary: "Tier 1A: Immediate acquisition (score >85) | Tier 1B: Fast follow (75-85) | Tier 2: Phase 2 pipeline (65-75) | Tier 3: Watch list (<65)"
+        }
+      },
+      { 
+        id: 11, 
+        title: "Cannibalization & Market Void Analysis", 
+        color: "#5D4037", 
+        phase: "Decision", 
+        keyAction: "Analyze potential trade area overlap to prevent self-cannibalization while identifying market voids", 
+        targetedInsight: "Will new locations steal sales from existing units? Where do genuine market voids exist?", 
+        input: "Trade area polygons for all locations, sales by zip code, drive-time isochrones", 
+        output: "Cannibalization risk scores, overlap percentages, market void polygons", 
+        deliverable: "Cannibalization Risk Report with go/no-go recommendations and market void opportunity map", 
+        directive: "Calculate trade area overlap between proposed sites and existing locations. Flag overlaps >20% as high risk.", 
+        objective: "Optimize portfolio expansion to maximize incremental revenue capture", 
+        definition: "Assessment of trade area overlap to quantify risk of new units stealing from existing units.", 
+        visualLogic: "Every dollar cannibalized from an existing unit is wasted investment.", 
+        mapType: "Animated Slider Comparison Map", 
+        bestFor: "Expansion planning justification",
+        exampleOutput: {
+          title: "Cannibalization Risk Assessment",
+          description: "Trade area overlap analysis for proposed sites",
+          data: [
+            { sitePair: "156th & Maple ↔ 168th & Harrison", overlap: "8.2%", risk: "Low", recommendation: "Proceed", incrementalPop: "42,000" },
+            { sitePair: "132nd & L St ↔ 132nd & Center", overlap: "24.7%", risk: "High", recommendation: "Review", incrementalPop: "18,000" },
+            { sitePair: "84th & Q St ↔ 72nd & Dodge", overlap: "12.4%", risk: "Moderate", recommendation: "Proceed w/ Caution", incrementalPop: "31,000" },
+            { sitePair: "Gretna ↔ All Omaha sites", overlap: "3.1%", risk: "Very Low", recommendation: "Proceed", incrementalPop: "67,000" }
+          ],
+          summary: "Market voids identified: Southwest Omaha (pop: 89,000), Bellevue (pop: 54,000), Papillion (pop: 47,000) | Total incremental opportunity: 190,000 population"
+        }
+      },
+      { 
+        id: 12, 
+        title: "Final Recommendation & Implementation", 
+        color: "#263238", 
+        phase: "Execution", 
+        keyAction: "Synthesize all analysis into tier-prioritized site recommendations with acquisition timeline", 
+        targetedInsight: "Which sites should be pursued immediately vs. held for future phases?", 
+        input: "Weighted site scores, revenue projections, cannibalization analysis, real estate availability", 
+        output: "Tiered site recommendations, phased acquisition timeline, success metrics definitions", 
+        deliverable: "Executive Site Selection Report with strategic narrative, financial projections, implementation roadmap", 
+        directive: "Structure: Tier 1A (Immediate), Tier 1B (Fast Follow), Tier 2 (Phase 2 Pipeline), Tier 3 (Watch List). Include 30/60/90-day action items.", 
+        objective: "Deliver actionable recommendations that translate analysis into executed site acquisitions", 
+        definition: "Synthesis of all analytical findings into prioritized, actionable site recommendations.", 
+        visualLogic: "The final deliverable must bridge the gap between analysis and action. The roadmap makes execution inevitable.", 
+        mapType: "Scrollytelling Narrative Map", 
+        bestFor: "Board presentations, investment committee reviews",
+        exampleOutput: {
+          title: "Implementation Roadmap",
+          description: "Dutch Brothers Omaha expansion - 18-month plan",
+          data: [
+            { phase: "Phase 1 (Days 1-30)", action: "Execute LOIs on Tier 1A sites", sites: "156th & Maple, 132nd & L St", milestone: "2 LOIs signed" },
+            { phase: "Phase 2 (Days 31-90)", action: "Due diligence, permitting, Tier 1B LOIs", sites: "168th & Harrison, 84th & Q St", milestone: "Site plans approved" },
+            { phase: "Phase 3 (Months 4-8)", action: "Construction, hiring, marketing prep", sites: "All Phase 1 sites", milestone: "2 stores open" },
+            { phase: "Phase 4 (Months 9-12)", action: "Grand openings, performance monitoring", sites: "4 total locations", milestone: "Y1 revenue target: $5.8M" },
+            { phase: "Phase 5 (Months 13-18)", action: "Evaluate, optimize, Phase 2 expansion", sites: "Gretna, Bellevue, Papillion", milestone: "7 total locations" }
+          ],
+          summary: "Total investment: $4.2M | Projected Y3 portfolio revenue: $12.4M | ROI: 31.2% | Success metric: >90% of projected AUV by Month 12"
+        }
+      }
+    ];
+
+    const principles = [
+      { title: "Start with Competitive Intelligence", description: "Competitor success validates market demand", icon: "search" },
+      { title: "Normalize Everything", description: "Raw numbers lie about relative performance", icon: "chart" },
+      { title: "Understand Customer Journeys", description: "The 'why' matters as much as the 'what'", icon: "navigation" },
+      { title: "Prioritize Growth", description: "Growing markets beat declining markets", icon: "trending" },
+      { title: "Visualize Spatially", description: "Interactive maps reveal invisible patterns", icon: "map" },
+      { title: "Score Systematically", description: "Weighted criteria force explicit tradeoffs", icon: "award" },
+      { title: "Check for Cannibalization", description: "Incremental dollars matter most", icon: "layers" },
+      { title: "End with Action", description: "Analysis without execution is worthless", icon: "zap" }
+    ];
+
+    const mapCatalog = [
+      { category: "Performance Comparison", maps: [
+        { name: "Bubble Map with Multi-Variable Encoding", description: "Size = sales, color = growth, opacity = rank", bestFor: "Executive overview" },
+        { name: "Side-by-Side Split Screen", description: "Synchronized zoom/pan comparison", bestFor: "Finalist comparison" },
+        { name: "Ranked Performance Gradient", description: "All locations colored by tier", bestFor: "Portfolio assessment" }
+      ]},
+      { category: "Trade Area & Capture Zone", maps: [
+        { name: "Heat Map of Sales Concentration", description: "Zip codes shaded by sales %", bestFor: "Geographic patterns" },
+        { name: "Isochrone Drive Time Map", description: "5/10/15/20-minute rings", bestFor: "Drive-time validation" },
+        { name: "3D Extrusion Map", description: "3D columns = sales volume", bestFor: "Stakeholder presentations" }
+      ]},
+      { category: "Demographic Overlay", maps: [
+        { name: "Income Stratification Map", description: "Income layers with shopper overlay", bestFor: "Targeting" },
+        { name: "Age Distribution Hex Map", description: "Hexes colored by age group", bestFor: "Age-appropriate sites" },
+        { name: "Demographic Mismatch Alert", description: "Flags where shoppers ≠ residents", bestFor: "Underserved segments" }
+      ]},
+      { category: "Competitive Landscape", maps: [
+        { name: "Customer Journey Flow (Sankey)", description: "Animated shopping flows", bestFor: "Co-tenancy strategy" },
+        { name: "Competitive Threat Radius", description: "Rings showing threat levels", bestFor: "Defensive selection" },
+        { name: "Market Saturation Index", description: "Stores vs. supportable ratio", bestFor: "White space analysis" }
+      ]},
+      { category: "Decision Support", maps: [
+        { name: "Multi-Criteria Weighted Score", description: "Real-time weight adjustment", bestFor: "Decision workshops" },
+        { name: "Go/No-Go Traffic Light", description: "Green/yellow/red by criteria", bestFor: "Pipeline screening" },
+        { name: "Before/After Coverage", description: "Slider comparison", bestFor: "Expansion planning" }
+      ]}
+    ];
+
+    const formulas = [
+      { name: "Sales Efficiency", formula: "Card Sales ÷ Trade Area Population" },
+      { name: "Growth Momentum", formula: "Current YoY% × Previous YoY%" },
+      { name: "Customer Value", formula: "Card Sales ÷ Unique Customers" },
+      { name: "Visit Intensity", formula: "Transactions ÷ Unique Customers" },
+      { name: "Translation Factor", formula: "Client National Avg ÷ Competitor National Avg" },
+      { name: "Composite Score", formula: "(Growth × 0.25) + (AOV × 0.20) + (Rank × 0.20) + (CustGrowth × 0.15) + (TradeArea × 0.10) + (Concentration × 0.10)" }
+    ];
+
+    let expandedSteps = {};
+
+    // Functions
+    function showSection(sectionId) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.getElementById('section-' + sectionId).classList.remove('hidden');
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === sectionId) item.classList.add('active');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileMenu() {
+      const nav = document.getElementById('mobileNav');
+      const menuIcon = document.getElementById('menuIcon');
+      const closeIcon = document.getElementById('closeIcon');
+      nav.classList.toggle('hidden');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    function toggleStep(stepId) {
+      expandedSteps[stepId] = !expandedSteps[stepId];
+      renderSteps();
+    }
+
+    function renderExampleTable(example, stepColor) {
+      const columns = Object.keys(example.data[0]);
+      return `
+        <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 border border-slate-200">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background-color: ${stepColor}">
+              <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">Example Output</div>
+              <div class="text-sm font-bold text-slate-800">${example.title}</div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 mb-3 italic">${example.description}</p>
+          <div class="overflow-x-auto rounded-lg border border-slate-200">
+            <table class="example-table w-full bg-white">
+              <thead>
+                <tr>
+                  ${columns.map(col => `<th class="text-left text-slate-600">${col.replace(/([A-Z])/g, ' $1').trim()}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${example.data.map(row => `
+                  <tr class="hover:bg-slate-50">
+                    ${columns.map(col => {
+                      let val = row[col];
+                      let classes = 'text-slate-700';
+                      // Color coding for specific values
+                      if (val === 'High' || val === 'Very High') classes = 'text-red-600 font-medium';
+                      else if (val === 'Low' || val === 'Very Low') classes = 'text-green-600 font-medium';
+                      else if (val === 'Moderate' || val === 'Medium') classes = 'text-yellow-600 font-medium';
+                      else if (val === 'Optimal' || val === 'Target Zone') classes = 'text-emerald-600 font-bold';
+                      else if (val === '1A') classes = 'font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded';
+                      else if (val === '1B') classes = 'font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded';
+                      else if (val === '2') classes = 'font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded';
+                      else if (val && val.startsWith && val.startsWith('+')) classes = 'text-green-600 font-medium';
+                      else if (val && val.startsWith && val.startsWith('-')) classes = 'text-red-600 font-medium';
+                      else if (val === 'Proceed') classes = 'text-green-600 font-medium';
+                      else if (val === 'Avoid' || val === 'Review') classes = 'text-red-600 font-medium';
+                      else if (val === 'Selective' || val === 'Proceed w/ Caution') classes = 'text-yellow-600 font-medium';
+                      return `<td class="${classes}">${val}</td>`;
+                    }).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 mt-0.5 flex-shrink-0" style="color: ${stepColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="text-xs text-slate-600"><span class="font-bold text-slate-700">Key Insight:</span> ${example.summary}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSteps() {
+      const container = document.getElementById('stepsContainer');
+      container.innerHTML = steps.map(step => `
+        <div class="step-card mb-4 rounded-xl overflow-hidden shadow-lg" style="border-left: 4px solid ${step.color}">
+          <button onclick="toggleStep(${step.id})" class="w-full p-5 bg-white flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background-color: ${step.color}15">
+                <svg class="w-6 h-6" style="color: ${step.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full text-white" style="background-color: ${step.color}">STEP ${step.id}</span>
+                  <span class="text-xs text-gray-500 font-medium">${step.phase}</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">${step.title}</h3>
+              </div>
+            </div>
+            <svg class="w-6 h-6 text-gray-400 transition-transform ${expandedSteps[step.id] ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          ${expandedSteps[step.id] ? `
+            <div class="expand-content bg-gray-50 border-t border-gray-100">
+              <div class="p-5 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
+                <div class="flex items-start gap-3">
+                  <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <div>
+                    <div class="text-xs font-bold text-gray-300 mb-1">KEY ACTION</div>
+                    <p class="text-sm leading-relaxed">${step.keyAction}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                  <div class="text-xs font-bold text-gray-600 mb-2">TARGETED INSIGHT</div>
+                  <p class="text-sm text-gray-700">${step.targetedInsight}</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                  <div class="text-xs font-bold text-gray-600 mb-2">DEFINITION</div>
+                  <p class="text-sm text-gray-700">${step.definition}</p>
+                </div>
+              </div>
+              <div class="px-5 pb-5 space-y-3">
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><div class="text-xs font-bold text-green-600 mb-1">INPUT</div><p class="text-sm text-gray-600">${step.input}</p></div>
+                    <div><div class="text-xs font-bold text-blue-600 mb-1">OUTPUT</div><p class="text-sm text-gray-600">${step.output}</p></div>
+                    <div><div class="text-xs font-bold text-purple-600 mb-1">DELIVERABLE</div><p class="text-sm text-gray-600">${step.deliverable}</p></div>
+                  </div>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <div class="text-xs font-bold text-amber-700 mb-1">DIRECTIVE</div>
+                  <p class="text-sm text-gray-700">${step.directive}</p>
+                </div>
+                
+                <!-- Example Output Section -->
+                ${step.exampleOutput ? renderExampleTable(step.exampleOutput, step.color) : ''}
+                
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100" style="border-left: 3px solid ${step.color}">
+                  <div class="text-xs font-bold mb-2" style="color: ${step.color}">VISUAL LOGIC</div>
+                  <p class="text-sm text-gray-700 mb-3">${step.visualLogic}</p>
+                  <div class="flex flex-wrap gap-4 text-sm">
+                    <div><span class="font-bold text-gray-500">Map Type:</span> <span class="text-gray-700">${step.mapType}</span></div>
+                    <div><span class="font-bold text-gray-500">Best For:</span> <span style="color: ${step.color}" class="font-medium">${step.bestFor}</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderPrinciples() {
+      const gridContainer = document.getElementById('principlesGrid');
+      const listContainer = document.getElementById('principlesContainer');
+      
+      gridContainer.innerHTML = principles.map((p, i) => `
+        <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-emerald-100 flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <h3 class="font-bold text-gray-800 mb-1">${p.title}</h3>
+          <p class="text-sm text-gray-600">${p.description}</p>
+        </div>
+      `).join('');
+
+      listContainer.innerHTML = principles.map((p, i) => `
+        <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-blue-500">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 mb-1">${i + 1}. ${p.title}</h3>
+              <p class="text-gray-600">${p.description}</p>
+            </div>
+          </div>
+        </div>
+      `).join('') + `
+        <div class="bg-gray-800 rounded-xl p-6 text-white">
+          <h3 class="font-bold text-lg mb-4">Remember: Analysis Without Execution is Worthless</h3>
+          <p class="opacity-80">The framework is designed to be applied iteratively. As new data becomes available, earlier steps can be revisited to refine conclusions. The interactive map visualizations serve as both analytical tools and communication devices.</p>
+        </div>
+      `;
+    }
+
+    function renderMapCatalog() {
+      const container = document.getElementById('mapCatalogContainer');
+      container.innerHTML = mapCatalog.map(category => `
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-4">
+          <div class="bg-gradient-to-r from-gray-800 to-gray-700 px-5 py-3">
+            <h3 class="text-white font-bold">${category.category} Maps</h3>
+          </div>
+          <div class="divide-y divide-gray-100">
+            ${category.maps.map(map => `
+              <div class="p-4 hover:bg-gray-50 transition-colors">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-gray-800">${map.name}</h4>
+                      <p class="text-sm text-gray-600">${map.description}</p>
+                    </div>
+                  </div>
+                  <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full whitespace-nowrap">${map.bestFor}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderFormulas() {
+      const container = document.getElementById('formulasContainer');
+      container.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="divide-y divide-gray-100">
+            ${formulas.map(f => `
+              <div class="p-5 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                  </div>
+                  <h3 class="font-bold text-gray-800">${f.name}</h3>
+                </div>
+                <div class="ml-11 p-3 bg-gray-50 rounded-lg mono text-sm text-gray-700">${f.formula}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="bg-gradient-to-r from-blue-600 to-emerald-500 rounded-xl p-6 text-white mt-4">
+          <h3 class="font-bold text-lg mb-2">Master Formula: Composite Site Score</h3>
+          <p class="opacity-90 text-sm mb-4">The weighted combination that produces defensible site rankings</p>
+          <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 mono text-sm">
+            Score = (YoY_Growth × 0.25) + (AOV × 0.20) + (Brand_Rank × 0.20) + (Customer_Growth × 0.15) + (Trade_Area × 0.10) + (Concentration × 0.10)
+          </div>
+        </div>
+      `;
+    }
+
+    // Scroll progress
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      document.querySelector('.progress-bar').style.width = progress + '%';
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSteps();
+      renderPrinciples();
+      renderMapCatalog();
+      renderFormulas();
+      showSection('overview');
+    });
+  </script>
+</body>
+</html>
