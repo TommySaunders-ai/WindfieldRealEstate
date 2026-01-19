@@ -1,0 +1,1392 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronDown, ChevronRight, Map, Target, Users, TrendingUp, Navigation, Filter, DollarSign, Award, GitBranch, FileText, MapPin, BarChart3, Layers, Search, Menu, X, ArrowRight, CheckCircle2, AlertCircle, Lightbulb, BookOpen, Calculator, Eye, Zap } from 'lucide-react';
+
+const SiteSelectionToolkit = () => {
+  const [activeSection, setActiveSection] = useState('overview');
+  const [expandedStep, setExpandedStep] = useState(null);
+  const [expandedSubSection, setExpandedSubSection] = useState({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (contentRef.current) {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        setScrollProgress((scrollTop / docHeight) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const toggleSubSection = (stepId, sectionId) => {
+    const key = `${stepId}-${sectionId}`;
+    setExpandedSubSection(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const steps = [
+    {
+      id: 1,
+      title: "Market Definition & Boundary Setting",
+      icon: Map,
+      color: "#1E3A5F",
+      phase: "Foundation",
+      keyAction: "Define the geographic market boundaries and establish the analysis perimeter for site selection",
+      targetedInsight: "Where does the addressable market begin and end? What is the competitive landscape footprint?",
+      input: "Target market geography, existing brand footprint (if any), competitor location inventory, population centers, major traffic corridors",
+      output: "Defined market boundary polygon, list of municipalities/counties included, primary and secondary market zones",
+      deliverable: "Market Boundary Map with zone classifications (Core Market, Expansion Market, Watch Market)",
+      directive: "Establish clear geographic parameters before any analysis begins. Define both the competitive market (where competitors operate) and the addressable market (where your client can realistically serve customers).",
+      objective: "Create a defensible, data-driven market definition that guides all subsequent analysis and prevents scope creep",
+      definition: "Market Definition is the process of establishing the geographic, demographic, and competitive boundaries within which site selection decisions will be made. It answers the fundamental question: Where should we be looking?",
+      visualLogic: "The market boundary creates the canvas upon which all other analysis layers will be painted. Without clear boundaries, analysis becomes unfocused and recommendations lack geographic context.",
+      mapType: "Choropleth with Boundary Overlay",
+      mapDescription: "The defined market area with tiered zones (Core, Expansion, Watch) colored by priority level, overlaid with competitor locations and major traffic corridors",
+      dataPoints: "Municipal boundaries, county lines, highway network, competitor coordinates, population density by census tract, major employment centers",
+      interactiveFeatures: "Toggle between zone views, adjust boundary polygons, show/hide competitor layers, click zones to see population and household counts, overlay drive-time isochrones from market center",
+      bestFor: "Initial stakeholder alignment, establishing analysis scope, communicating market opportunity size",
+      criticalAlerts: [
+        "Define what constitutes a 'successful' location in this specific market",
+        "Establish minimum population thresholds for site consideration",
+        "Identify regulatory constraints (zoning, drive-through restrictions, signage ordinances)",
+        "Document brand format requirements (lot size, parking, building specs)"
+      ]
+    },
+    {
+      id: 2,
+      title: "Competitive Intelligence Gathering",
+      icon: Search,
+      color: "#2E7D32",
+      phase: "Data Collection",
+      keyAction: "Compile comprehensive competitor location inventory and obtain transaction-level performance data for proxy analysis",
+      targetedInsight: "Where are competitors located, how are they performing, and what does their success/failure tell us about market demand?",
+      input: "Competitor brand list, location databases, CenterCheck or similar transaction data reports, store format classifications",
+      output: "Complete competitor location database with coordinates, performance metrics (sales, transactions, YoY growth), brand rank percentiles",
+      deliverable: "Competitor Performance Database with 15+ data points per location, formatted for analysis and visualization",
+      directive: "Gather data from at least 8-10 comparable competitor locations to establish statistical validity. Prioritize locations within or adjacent to target market. Include both high and low performers for contrast.",
+      objective: "Build a comprehensive competitive intelligence foundation that validates market demand and reveals performance patterns",
+      definition: "Competitive Intelligence Gathering is the systematic collection of competitor location and performance data that serves as a proxy for understanding market potential and customer behavior patterns in the absence of proprietary data.",
+      visualLogic: "Competitor data serves as the 'validation layer' - if no competitor has succeeded in an area, that's a red flag. If competitors are thriving, that validates demand that your client can potentially capture.",
+      mapType: "Multi-Variable Bubble Map",
+      mapDescription: "Each competitor location as a bubble where SIZE = annual sales volume, COLOR = YoY growth (red negative, green positive), OPACITY = brand rank percentile",
+      dataPoints: "Latitude/longitude, Card Sales, YoY Growth %, National Rank Percentile, Transaction Count, Store Format",
+      interactiveFeatures: "Hover for full metrics card, click to zoom to trade area, filter by growth range (declining/stable/growing), toggle bubble size between sales/transactions/customers, compare any two locations side-by-side",
+      bestFor: "Executive overview of competitive landscape, identifying high/low performers, spotting geographic patterns in performance",
+      dataPointsTable: [
+        { metric: "Card Sales", description: "Annual revenue from card transactions", purpose: "Primary performance metric" },
+        { metric: "YoY Growth %", description: "Year-over-year sales change", purpose: "Trend direction indicator" },
+        { metric: "Transactions", description: "Annual transaction count", purpose: "Volume indicator" },
+        { metric: "AOV", description: "Average Order Value (Card Sales ÷ Transactions)", purpose: "Ticket size metric" },
+        { metric: "Customer Count", description: "Unique cardholders", purpose: "Reach indicator" },
+        { metric: "Customer Frequency", description: "Avg visits per customer", purpose: "Loyalty/habit metric" },
+        { metric: "National Rank", description: "Percentile vs all brand locations", purpose: "Relative performance" },
+        { metric: "State Rank", description: "Percentile vs state locations", purpose: "Market-specific performance" },
+        { metric: "Trade Area Zips", description: "Number of zip codes served", purpose: "Geographic reach" },
+        { metric: "Top Zip %", description: "Sales concentration in most active zip", purpose: "Dependency risk indicator" }
+      ]
+    },
+    {
+      id: 3,
+      title: "Trade Area Analysis",
+      icon: Target,
+      color: "#0277BD",
+      phase: "Data Collection",
+      keyAction: "Map the geographic capture zones for each competitor location and analyze sales concentration patterns",
+      targetedInsight: "How far do customers travel to reach each location? Where is demand concentrated vs. diffuse?",
+      input: "Sales by zip code data, zip code boundary shapefiles, road network data, competitor coordinates",
+      output: "Trade area polygons for each location, sales concentration heat maps, drive-time isochrone overlays",
+      deliverable: "Trade Area Comparison Report showing geographic reach, concentration risk scores, and expansion opportunity zones",
+      directive: "Calculate trade area metrics for each competitor: (1) Number of active zip codes, (2) Sales concentration in top zip, (3) Sales per zip code efficiency, (4) Estimated drive-time reach. Flag locations with >60% concentration in one zip as high-risk.",
+      objective: "Understand the spatial economics of each location - where customers come from, how far they travel, and where geographic gaps exist",
+      definition: "Trade Area Analysis is the examination of the geographic zones from which a retail location draws its customers, revealing patterns of convenience vs. destination behavior and identifying white space opportunities.",
+      visualLogic: "Trade areas reveal the 'pull' of each location. A location with wide trade area reach is a destination; one with tight concentration is convenience-driven. This distinction fundamentally affects site strategy.",
+      mapType: "Choropleth with 3D Extrusion Option",
+      mapDescription: "Each zip code colored by percentage of total sales contribution, with optional 3D column heights representing sales volume",
+      dataPoints: "Sales percentage by zip code (ranging from <1% to 80%+), zip code boundaries, population by zip, median income by zip",
+      interactiveFeatures: "Hover for exact sales %, adjust threshold slider to highlight high-value zones, click zip to see demographics, toggle 2D/3D view, compare concentration patterns across multiple locations",
+      bestFor: "Understanding geographic sales patterns, identifying concentration risk, spotting expansion opportunities into underserved zips",
+      classificationTable: [
+        { classification: "Hyper-Local", zipCodes: "1-3", concentration: ">70%", implication: "Convenience-driven, walk-in traffic, limited reach" },
+        { classification: "Concentrated", zipCodes: "4-7", concentration: "40-70%", implication: "Strong local anchor with some regional pull" },
+        { classification: "Regional Draw", zipCodes: "8-12", concentration: "20-40%", implication: "Destination location with broad appeal" },
+        { classification: "Diffuse", zipCodes: "13+", concentration: "<20%", implication: "Wide geographic reach, likely commuter/convenience" }
+      ]
+    },
+    {
+      id: 4,
+      title: "Demographic Profiling",
+      icon: Users,
+      color: "#7B1FA2",
+      phase: "Analysis",
+      keyAction: "Extract and compare shopper demographics vs. resident demographics to identify target customer profiles and market alignment",
+      targetedInsight: "Who actually shops at successful locations? Does shopper profile match or diverge from local population? What demographic patterns correlate with strong performance?",
+      input: "CenterCheck demographic data (shopper age, income, gender, ethnicity), Census demographic data (resident age, income, gender, ethnicity), location performance metrics",
+      output: "Demographic comparison matrices, shopper vs. resident variance scores, demographic-performance correlation analysis",
+      deliverable: "Demographic Alignment Report with target customer profile, market fit scores, and demographic mismatch alerts",
+      directive: "For each location, compare shopper demographics to resident demographics across 4 dimensions: (1) Age distribution, (2) Income brackets, (3) Gender split, (4) Ethnicity composition. Calculate variance scores to identify locations that 'punch above their weight' by attracting higher-income shoppers than local averages.",
+      objective: "Build a data-driven target customer profile and identify markets where demographics align with proven success patterns",
+      definition: "Demographic Profiling is the analysis of customer characteristics (age, income, household composition) to identify the ideal customer profile and assess market fit between potential sites and target demographics.",
+      visualLogic: "Demographics explain WHY locations perform differently. A location in a middle-income area attracting upper-income shoppers reveals pull factors worth replicating. Demographic mismatches reveal untapped opportunities.",
+      mapType: "Bivariate Choropleth with Alert Flags",
+      mapDescription: "Locations flagged where shopper demographics significantly differ from local census demographics, colored by mismatch type (income gap, age gap, etc.)",
+      dataPoints: "Census demographics by zip/tract, shopper demographics from transaction data, calculated variance scores, location performance metrics",
+      interactiveFeatures: "Toggle between demographic dimensions (income, age, gender), set mismatch threshold sensitivity, click location to see detailed comparison table, highlight 'punch above weight' locations",
+      bestFor: "Identifying underserved customer segments, finding locations that outperform demographic expectations, building target customer profiles",
+      correlationInsights: [
+        { correlation: "Income ↔ AOV", insight: "Higher income areas correlate with higher average order values (positive correlation)" },
+        { correlation: "Population Density ↔ Transaction Volume", insight: "Higher density = more transactions, but rural locations can outperform if they serve as regional destinations" },
+        { correlation: "Age 35-54 ↔ Customer Frequency", insight: "Established adults show higher loyalty; younger demographics (18-34) are more mobile with lower frequency" },
+        { correlation: "Trade Area Size ↔ Sales Concentration", insight: "Inverse relationship - wider trade areas have more diffuse sales patterns" }
+      ]
+    },
+    {
+      id: 5,
+      title: "Customer Journey Mapping",
+      icon: Navigation,
+      color: "#E65100",
+      phase: "Analysis",
+      keyAction: "Analyze cardholder spend journeys to understand where customers shop before and after visiting each location",
+      targetedInsight: "What is the shopping context? Is this a standalone trip or part of a broader shopping journey? Which co-tenants drive traffic?",
+      input: "Cardholder spend journey data (top 3 previous locations, top 3 next locations), retailer category classifications, co-tenant location data",
+      output: "Customer journey flow diagrams, co-shopping percentages, trip chain analysis, complementary retailer rankings",
+      deliverable: "Customer Journey Analysis showing trip type classification (destination vs. trip-chain), optimal co-tenancy recommendations",
+      directive: "Extract journey data to classify each location by trip type: (1) DESTINATION (>90% standalone trips) - success depends on traffic volume; (2) TRIP-CHAIN (>10% co-shopping) - success enhanced by retail synergy. Identify which specific retailers drive the most cross-traffic.",
+      objective: "Understand the shopping context that drives visits and identify optimal co-tenancy strategies for new sites",
+      definition: "Customer Journey Mapping is the analysis of sequential shopping behavior to understand how visits to a retail location fit within broader consumer trip patterns, revealing co-tenancy opportunities and traffic drivers.",
+      visualLogic: "Journey data reveals invisible connections between retailers. A coffee shop showing strong flows from grocery stores benefits from grocery adjacency; one with 99% standalone trips depends purely on traffic capture.",
+      mapType: "Sankey Diagram Overlaid on Map",
+      mapDescription: "Animated flow lines showing where customers shopped before (incoming) and after (outgoing) visiting the subject location, with line thickness proportional to customer volume",
+      dataPoints: "Cardholder spend journey data, top 3 previous locations, top 3 next locations, flow percentages, retailer coordinates",
+      interactiveFeatures: "Toggle incoming vs. outgoing flows, filter by retailer category (grocery, discount, pharmacy), highlight strongest connections, compare flow patterns across multiple locations, animate customer movement",
+      bestFor: "Understanding customer shopping context, identifying co-tenancy opportunities, validating trip-chain vs. destination site strategies",
+      tripTypeTable: [
+        { type: "Destination", coShoppingRate: "<5%", revenueDriver: "Pure traffic volume", siteStrategy: "Maximize VPD exposure" },
+        { type: "Convenience", coShoppingRate: "5-15%", revenueDriver: "Traffic + some synergy", siteStrategy: "Balance traffic and access" },
+        { type: "Trip-Chain", coShoppingRate: ">15%", revenueDriver: "Retail synergy premium", siteStrategy: "Prioritize co-tenancy quality" }
+      ]
+    },
+    {
+      id: 6,
+      title: "Data Normalization & Benchmarking",
+      icon: BarChart3,
+      color: "#00695C",
+      phase: "Analysis",
+      keyAction: "Normalize raw performance data to enable apples-to-apples comparison across fundamentally different markets",
+      targetedInsight: "Which locations are truly outperforming given their market context? How do we compare a rural destination to an urban convenience store?",
+      input: "Raw sales/transaction data, trade area population, number of zip codes served, store square footage (if available), national/state averages",
+      output: "Normalized performance metrics (Sales Per Capita, Sales Per Zip, Transaction Density, Customer Conversion Rate), benchmark ranges",
+      deliverable: "Normalized Performance Dashboard with location rankings by efficiency metrics, benchmark comparison charts",
+      directive: "Calculate minimum 5 normalization metrics for each location: (1) Sales Per Capita = Annual Sales ÷ Trade Area Population; (2) Sales Per Zip = Annual Sales ÷ Active Zip Codes; (3) Transaction Density = Transactions ÷ Trade Area Population; (4) Customer Conversion = Customers ÷ Trade Area Population; (5) Sales PSF if square footage available. Rank locations by each metric.",
+      objective: "Enable fair comparison across disparate market contexts and identify true outperformers that succeed despite challenging conditions",
+      definition: "Data Normalization is the mathematical transformation of raw metrics into comparable units that account for differences in market size, population, and geographic reach, enabling valid cross-location comparison.",
+      visualLogic: "Raw numbers lie. A $3M store in Manhattan may be underperforming while a $1.5M store in rural Nebraska may be exceptional. Normalization reveals the truth behind the numbers.",
+      mapType: "Scatter Plot Overlaid on Geographic Map",
+      mapDescription: "Each location plotted with X-axis = normalized efficiency metric (e.g., Sales Per Capita), Y-axis = absolute performance (e.g., Total Sales), positioned geographically with quadrant highlighting",
+      dataPoints: "All raw metrics, all normalized metrics, geographic coordinates, trade area population",
+      interactiveFeatures: "Change X and Y variables via dropdown, show best-fit regression line with R² value, highlight outliers, click any point to see full location details, filter by performance quadrant",
+      bestFor: "Identifying true efficiency leaders, spotting underperformers with potential, statistical analysis of what drives success",
+      normalizationFormulas: [
+        { metric: "Sales Per Capita", formula: "Annual Card Sales ÷ Trade Area Population", reveals: "Market penetration efficiency" },
+        { metric: "Sales Per Zip", formula: "Annual Card Sales ÷ Number of Active Zips", reveals: "Geographic efficiency" },
+        { metric: "Transaction Density", formula: "Transactions ÷ Trade Area Population", reveals: "Transaction frequency per person" },
+        { metric: "Customer Conversion", formula: "Unique Customers ÷ Trade Area Population", reveals: "Market capture rate" },
+        { metric: "Sales PSF", formula: "Annual Sales ÷ Store Square Footage", reveals: "Productivity benchmark" }
+      ],
+      benchmarkTable: [
+        { metric: "YoY Growth", poor: "<-5%", average: "-5% to +5%", good: "+5% to +15%", excellent: ">+15%" },
+        { metric: "AOV", poor: "<$10", average: "$10-$13", good: "$13-$16", excellent: ">$16" },
+        { metric: "Customer Frequency", poor: "<0.10", average: "0.10-0.15", good: "0.15-0.20", excellent: ">0.20" },
+        { metric: "Brand Rank (State)", poor: "<70%", average: "70-85%", good: "85-95%", excellent: ">95%" }
+      ]
+    },
+    {
+      id: 7,
+      title: "Competitive Positioning Strategy",
+      icon: GitBranch,
+      color: "#C62828",
+      phase: "Strategy",
+      keyAction: "Analyze competitor proximity patterns to determine optimal distance from existing competitors for new site placement",
+      targetedInsight: "How close is too close? What is the 'Goldilocks zone' of competitor proximity that validates demand without causing direct cannibalization?",
+      input: "Competitor coordinates, performance data by proximity band, brand-specific co-location history from comparable markets",
+      output: "Optimal proximity ranges by competitor type, competitive pressure scores, strategic positioning recommendations",
+      deliverable: "Competitive Positioning Map with proximity bands and recommended placement zones",
+      directive: "Analyze historical performance by competitor proximity: (1) <0.5 mile = High competitive pressure; (2) 0.5-1.0 mile = Moderate pressure with demand validation; (3) 1.0-2.0 mile = Low pressure, shared trade area; (4) >2.0 mile = Independent trade areas. The Dutch Brothers analysis revealed optimal positioning at 0.8-1.5 miles from Starbucks.",
+      objective: "Determine strategic positioning that validates market demand while maintaining competitive differentiation",
+      definition: "Competitive Positioning Strategy is the deliberate selection of location proximity to competitors based on analysis of how distance affects performance, balancing demand validation against competitive pressure.",
+      visualLogic: "Strategic proximity validates demand (if Starbucks succeeds here, coffee demand exists) while creating differentiation opportunity (different format, speed, experience). Too close = cannibalization; too far = unvalidated market.",
+      mapType: "Concentric Ring Buffer Map",
+      mapDescription: "Each competitor location surrounded by color-coded distance bands (red <0.5mi, yellow 0.5-1.0mi, green 1.0-2.0mi, blue >2.0mi) with proposed sites plotted to show positioning",
+      dataPoints: "Competitor coordinates, distance calculations to all potential sites, historical performance by proximity band, competitive pressure scores",
+      interactiveFeatures: "Adjust band distance thresholds, toggle competitor types on/off, show performance stats for each band, click any band to see historical success rates, overlay potential sites to visualize positioning",
+      bestFor: "Strategic site placement decisions, visualizing competitive landscape, identifying 'sweet spot' positioning opportunities",
+      proximityTable: [
+        { distance: "<0.5 miles", pressure: "Very High", implication: "Direct competition, requires strong differentiation" },
+        { distance: "0.5-1.0 miles", pressure: "High", implication: "Shared trade area, validated demand" },
+        { distance: "1.0-1.5 miles", pressure: "Optimal", implication: "Demand validation without direct overlap (SWEET SPOT)" },
+        { distance: "1.5-2.0 miles", pressure: "Moderate", implication: "Partial overlap, separate primary trade areas" },
+        { distance: ">2.0 miles", pressure: "Low", implication: "Independent trade areas, demand may be unvalidated" }
+      ]
+    },
+    {
+      id: 8,
+      title: "Site Identification & Screening",
+      icon: Filter,
+      color: "#4527A0",
+      phase: "Strategy",
+      keyAction: "Apply location criteria filters to identify potential sites within target market and screen based on primary requirements",
+      targetedInsight: "Which specific parcels/addresses meet minimum requirements for consideration? What is the universe of potential sites?",
+      input: "Commercial real estate listings, zoning maps, traffic count data, parcel data with lot sizes, competitive proximity calculations",
+      output: "Qualified site inventory with basic metrics (traffic, zoning, lot size, proximity to competitors), disqualified sites with rejection reasons",
+      deliverable: "Site Screening Matrix showing all potential sites with pass/fail status on each criterion",
+      directive: "Apply minimum threshold filters in priority order: (1) Zoning permits use (drive-through if applicable); (2) Traffic count meets minimum (typically 20,000+ VPD for coffee/QSR); (3) Lot size accommodates format; (4) Competitive proximity within target range; (5) Demographics meet baseline. Reject sites failing any critical criterion.",
+      objective: "Efficiently narrow the universe of potential sites to a manageable pipeline of qualified candidates for detailed analysis",
+      definition: "Site Identification & Screening is the systematic process of discovering potential locations and filtering them through minimum qualification criteria to create a focused pipeline of viable candidates.",
+      visualLogic: "Screening prevents wasted analysis effort. A site failing basic zoning requirements shouldn't consume analysis resources regardless of other attractive qualities. The funnel must narrow efficiently.",
+      mapType: "Filtered Point Map with Pass/Fail Coloring",
+      mapDescription: "All potential sites as points, colored green (pass all criteria), yellow (pass most, fail one), red (fail multiple), with ability to click any site to see pass/fail breakdown",
+      dataPoints: "Site coordinates, zoning classifications, traffic counts, lot sizes, competitor distances, demographic scores",
+      interactiveFeatures: "Toggle criteria filters on/off to watch sites change status, click site for detailed scorecard, adjust threshold sliders to see sensitivity, export qualified sites list, show rejection reasons on hover",
+      bestFor: "Pipeline management, stakeholder updates on site inventory, identifying near-miss sites that could qualify with adjustments",
+      screeningCriteria: [
+        { criterion: "Traffic Count (VPD)", threshold: "20,000+", priority: "Critical", notes: "25,000+ preferred for coffee/QSR" },
+        { criterion: "Zoning", threshold: "Permits Use", priority: "Critical", notes: "Drive-through permitted if applicable" },
+        { criterion: "Lot Size", threshold: "Format Minimum", priority: "Critical", notes: "Typically 0.5-1.5 acres for drive-through" },
+        { criterion: "Competitor Proximity", threshold: "0.5-2.0 miles", priority: "High", notes: "Within optimal competitive band" },
+        { criterion: "Median HH Income", threshold: "$60,000+", priority: "High", notes: "Concept-specific threshold" },
+        { criterion: "Population (3-mile)", threshold: "25,000+", priority: "Moderate", notes: "Lower threshold for destination sites" },
+        { criterion: "Visibility/Access", threshold: "Adequate", priority: "Moderate", notes: "Corner preferred, right-turn ingress" }
+      ]
+    },
+    {
+      id: 9,
+      title: "Revenue Projection Modeling",
+      icon: DollarSign,
+      color: "#1565C0",
+      phase: "Financial",
+      keyAction: "Build revenue projections for qualified sites using competitor performance data as proxy, adjusted for brand-specific factors",
+      targetedInsight: "What annual revenue can each site realistically generate? How do projections compare across the site pipeline?",
+      input: "Competitor performance data, translation factors (client AUV vs. competitor AUV), site-specific traffic counts, demographic multipliers",
+      output: "Year 1, Year 2, Year 3 revenue projections for each site, projection confidence levels, assumption documentation",
+      deliverable: "Revenue Projection Model with sensitivity analysis showing upside/downside scenarios",
+      directive: "Apply the Translation Factor method: (1) Establish ratio of client national average to competitor national average; (2) Apply to local competitor performance; (3) Adjust for format differences (dwell time, AOV, daypart mix); (4) Apply demographic multipliers; (5) Factor in market maturity curve (Year 1 = 88%, Year 2 = 100%, Year 3 = 112% of steady state).",
+      objective: "Provide defensible revenue projections that support investment decisions and site prioritization",
+      definition: "Revenue Projection Modeling is the translation of competitor performance data into expected client performance using statistical relationships, demographic adjustments, and brand-specific multipliers.",
+      visualLogic: "Revenue projections transform site analysis from subjective preference to financial decision-making. A site with great demographics but weak projected revenue shouldn't rank above one with moderate demographics but strong revenue potential.",
+      mapType: "Graduated Symbol Map with Revenue Coloring",
+      mapDescription: "Each qualified site as a circle sized by projected Year 2 revenue, colored by projection confidence level (green = high confidence, yellow = moderate, red = speculative)",
+      dataPoints: "Projected revenue by site, confidence scores based on data quality, comparable location count, demographic match score",
+      interactiveFeatures: "Toggle between Year 1/2/3 projections, adjust translation factor to see revenue impact, click site for full projection breakdown, show upside/downside ranges, compare to competitor actual performance",
+      bestFor: "Investment prioritization, portfolio planning, stakeholder financial presentations",
+      revenueFormula: "Year 2 Revenue = Base Volume × Demographic Multiplier × Competition Factor × Site Quality Factor × Seasonal Adjustment × Market Maturity",
+      formulaComponents: [
+        { component: "Base Volume", formula: "(VPD × 0.0085 × 365 × $6.50)", application: "Traffic capture × ticket size" },
+        { component: "Demographic Multiplier", formula: "(Median HH Income / $85,000) ^ 0.4", application: "Income adjustment" },
+        { component: "Competition Factor", formula: "0.88 to 1.15", application: "Based on Starbucks proximity" },
+        { component: "Site Quality Factor", formula: "0.92 to 1.08", application: "Visibility/access adjustment" },
+        { component: "Seasonal Adjustment", formula: "0.94 (Omaha)", application: "Climate/weather impact" },
+        { component: "Market Maturity", formula: "Y1: 0.88, Y2: 1.00, Y3: 1.12", application: "Ramp-up curve" }
+      ]
+    },
+    {
+      id: 10,
+      title: "Weighted Site Scoring",
+      icon: Award,
+      color: "#FF6F00",
+      phase: "Decision",
+      keyAction: "Apply a weighted multi-criteria scoring framework to rank all qualified sites and produce a prioritized recommendation list",
+      targetedInsight: "When all factors are considered with appropriate weighting, which sites rise to the top? How do sites compare across all dimensions?",
+      input: "All normalized metrics, revenue projections, qualitative assessments (visibility, access, co-tenancy), strategic factors (growth trajectory, competitive positioning)",
+      output: "Composite scores (0-100) for each site, component score breakdowns, tier classifications (Tier 1A, 1B, 2, 3)",
+      deliverable: "Site Ranking Report with scored comparison matrix, tier recommendations, and acquisition priority sequencing",
+      directive: "Apply weighted scoring with standard weights: (1) YoY Growth 25%; (2) AOV/Revenue Potential 20%; (3) Brand Rank/Performance 20%; (4) Customer Growth 15%; (5) Trade Area Quality 10%; (6) Concentration Risk 10%. Calculate composite score, rank sites, assign tiers.",
+      objective: "Produce a defensible, quantitative site ranking that balances multiple success factors and supports clear prioritization",
+      definition: "Weighted Site Scoring is the mathematical combination of multiple performance metrics into a single composite score using predetermined weights that reflect the relative importance of each factor to site success.",
+      visualLogic: "Scoring synthesizes complexity into actionable rankings. It forces explicit tradeoffs ('is growth more important than current performance?') and produces defensible recommendations that stakeholders can interrogate.",
+      mapType: "Dynamic Scoring Map with Adjustable Weights",
+      mapDescription: "All sites colored by composite score (gradient from red = low to green = high), with score recalculating in real-time as users adjust criteria weights",
+      dataPoints: "All individual metric scores, weight assignments, composite calculations, tier thresholds",
+      interactiveFeatures: "Drag sliders to adjust criteria weights and watch scores update live, save scoring scenarios for comparison, click site to see component breakdown, highlight top 5/10 sites, export ranked list",
+      bestFor: "Stakeholder decision workshops, scenario planning, documenting scoring methodology",
+      scoringWeights: [
+        { criterion: "YoY Sales Growth", weight: "25%", range: "0-100", rationale: "Growth trajectory is strongest predictor" },
+        { criterion: "AOV/Revenue Potential", weight: "20%", range: "0-100", rationale: "Financial performance capacity" },
+        { criterion: "Brand Rank (Performance)", weight: "20%", range: "0-100", rationale: "Relative competitive strength" },
+        { criterion: "Customer Growth", weight: "15%", range: "0-100", rationale: "Market share momentum" },
+        { criterion: "Trade Area Quality", weight: "10%", range: "0-100", rationale: "Geographic reach efficiency" },
+        { criterion: "Concentration Risk", weight: "10%", range: "0-100", rationale: "Inverse of dependency risk" }
+      ]
+    },
+    {
+      id: 11,
+      title: "Cannibalization & Market Void Analysis",
+      icon: Layers,
+      color: "#5D4037",
+      phase: "Decision",
+      keyAction: "Analyze potential trade area overlap between recommended sites and existing/planned locations to prevent self-cannibalization while identifying market voids",
+      targetedInsight: "Will new locations steal sales from existing units? Where do genuine market voids exist that represent incremental opportunity?",
+      input: "Trade area polygons for all locations (existing + proposed), sales by zip code, drive-time isochrones, competitive matrix",
+      output: "Cannibalization risk scores, overlap percentages, market void polygons, incremental opportunity estimates",
+      deliverable: "Cannibalization Risk Report with go/no-go recommendations and market void opportunity map",
+      directive: "For multi-site expansion, calculate trade area overlap between each proposed site and (1) existing brand locations, (2) other proposed sites. Flag overlaps >20% as high cannibalization risk. Identify market voids where (1) population exists, (2) no competitor serves, (3) demographics match target profile.",
+      objective: "Optimize portfolio expansion to maximize incremental revenue capture while identifying untapped market opportunities",
+      definition: "Cannibalization Analysis is the assessment of trade area overlap between locations to quantify the risk of new units stealing sales from existing units rather than capturing incremental market share. Market Void Analysis identifies geographic gaps in coverage representing untapped demand.",
+      visualLogic: "Every dollar cannibalized from an existing unit is wasted investment. Market voids represent the purest form of growth opportunity - demand that currently has no convenient option to serve it.",
+      mapType: "Animated Slider Comparison Map",
+      mapDescription: "Side-by-side or slider-reveal comparison showing market coverage 'before' (current state) vs. 'after' (with proposed locations), highlighting new coverage areas, overlap zones, and remaining voids",
+      dataPoints: "Current trade area polygons, proposed trade area polygons, overlap calculations, population within each zone, void area demographics",
+      interactiveFeatures: "Slide to reveal before/after, show coverage percentage change, highlight cannibalized areas in red, show market void opportunities in green, calculate incremental customer capture",
+      bestFor: "Expansion planning justification, board presentations, identifying next-wave expansion opportunities",
+      cannibalizationTable: [
+        { overlap: "<10%", risk: "Low", recommendation: "Proceed - minimal cannibalization expected" },
+        { overlap: "10-20%", risk: "Moderate", recommendation: "Proceed with caution - monitor post-opening" },
+        { overlap: "20-35%", risk: "High", recommendation: "Review necessity - significant overlap" },
+        { overlap: ">35%", risk: "Very High", recommendation: "Reject unless strategic (replacement/relocation)" }
+      ]
+    },
+    {
+      id: 12,
+      title: "Final Recommendation & Implementation",
+      icon: FileText,
+      color: "#263238",
+      phase: "Execution",
+      keyAction: "Synthesize all analysis into tier-prioritized site recommendations with acquisition timeline and implementation milestones",
+      targetedInsight: "Which sites should be pursued immediately vs. held for future phases? What is the optimal sequencing for market entry?",
+      input: "Weighted site scores, revenue projections, cannibalization analysis, real estate availability/timeline, capital allocation constraints",
+      output: "Tiered site recommendations, phased acquisition timeline, success metrics definitions, monitoring plan",
+      deliverable: "Executive Site Selection Report with strategic narrative, financial projections, implementation roadmap, and competitive tracking plan",
+      directive: "Structure final recommendation as: (1) Tier 1A - Immediate Acquisition (highest scores, lowest risk, best availability); (2) Tier 1B - Fast Follow (strong scores, minor conditions to resolve); (3) Tier 2 - Phase 2 Pipeline (good scores, timing/availability constraints); (4) Tier 3 - Watch List (conditional opportunities requiring market changes). Include 30/60/90-day action items.",
+      objective: "Deliver actionable recommendations that translate analysis into executed site acquisitions with clear accountability and timeline",
+      definition: "Final Recommendation & Implementation is the synthesis of all analytical findings into prioritized, actionable site recommendations with specific acquisition timelines, success metrics, and post-opening monitoring plans.",
+      visualLogic: "The final deliverable must bridge the gap between analysis and action. Beautiful analysis that doesn't translate to executed transactions has failed. The roadmap makes execution inevitable.",
+      mapType: "Scrollytelling Narrative Map",
+      mapDescription: "A guided visual narrative that walks stakeholders through: (1) Market overview zoom-out, (2) Competitive landscape analysis, (3) Site scoring comparison, (4) Recommended sites spotlight, (5) Implementation timeline overlay",
+      dataPoints: "All analysis layers consolidated, key insight callouts, recommendation summary, timeline milestones",
+      interactiveFeatures: "Scroll-driven animation between sections, section navigation sidebar, embedded charts and metrics, export to PDF for distribution, annotation capability for stakeholder review",
+      bestFor: "Board presentations, investment committee reviews, franchisee recruitment materials",
+      implementationTimeline: [
+        { phase: "1", timeline: "Days 1-30", actions: "Subscribe to data sources, order competitor reports, secure Tier 1A sites", deliverable: "LOIs executed on top sites" },
+        { phase: "2", timeline: "Days 31-60", actions: "Validate traffic patterns, map trade area overlaps, refine projections", deliverable: "Final site selection report" },
+        { phase: "3", timeline: "Days 61-90", actions: "Establish baseline metrics, create competitive dashboard, begin permitting", deliverable: "Pre-opening baseline established" },
+        { phase: "4", timeline: "Months 4-6", actions: "Site development, marketing preparation, operations training", deliverable: "Construction complete" },
+        { phase: "5", timeline: "Months 7-12", actions: "Grand openings (staggered), performance monitoring, optimization", deliverable: "Year 1 performance review" },
+        { phase: "6", timeline: "Months 13-18", actions: "Evaluate results, identify Phase 2 sites, refine site selection criteria", deliverable: "Phase 2 site pipeline" }
+      ]
+    }
+  ];
+
+  const phases = [
+    { name: "Foundation", color: "#1E3A5F", steps: [1] },
+    { name: "Data Collection", color: "#2E7D32", steps: [2, 3] },
+    { name: "Analysis", color: "#7B1FA2", steps: [4, 5, 6] },
+    { name: "Strategy", color: "#C62828", steps: [7, 8] },
+    { name: "Financial", color: "#1565C0", steps: [9] },
+    { name: "Decision", color: "#FF6F00", steps: [10, 11] },
+    { name: "Execution", color: "#263238", steps: [12] }
+  ];
+
+  const mapCatalog = [
+    { category: "Performance Comparison", maps: [
+      { name: "Bubble Map with Multi-Variable Encoding", description: "Size = sales, color = growth, opacity = rank", bestFor: "Executive overview" },
+      { name: "Side-by-Side Split Screen", description: "Synchronized zoom/pan comparison", bestFor: "Finalist site comparison" },
+      { name: "Ranked Performance Gradient", description: "All locations colored by tier", bestFor: "Portfolio assessment" }
+    ]},
+    { category: "Trade Area & Capture Zone", maps: [
+      { name: "Heat Map of Sales Concentration", description: "Zip codes shaded by sales %", bestFor: "Geographic patterns" },
+      { name: "Isochrone Drive Time Map", description: "5/10/15/20-minute rings", bestFor: "Drive-time validation" },
+      { name: "3D Extrusion Map", description: "3D columns = sales volume", bestFor: "Stakeholder presentations" }
+    ]},
+    { category: "Demographic Overlay", maps: [
+      { name: "Income Stratification Map", description: "Income layers with shopper overlay", bestFor: "Targeting" },
+      { name: "Age Distribution Hex Map", description: "Hexes colored by age group", bestFor: "Age-appropriate sites" },
+      { name: "Demographic Mismatch Alert", description: "Flags where shoppers ≠ residents", bestFor: "Underserved segments" }
+    ]},
+    { category: "Competitive Landscape", maps: [
+      { name: "Customer Journey Flow (Sankey)", description: "Animated shopping flows", bestFor: "Co-tenancy strategy" },
+      { name: "Competitive Threat Radius", description: "Rings showing threat levels", bestFor: "Defensive selection" },
+      { name: "Market Saturation Index", description: "Stores vs. supportable ratio", bestFor: "White space analysis" }
+    ]},
+    { category: "Decision Support", maps: [
+      { name: "Multi-Criteria Weighted Score", description: "Real-time weight adjustment", bestFor: "Decision workshops" },
+      { name: "Go/No-Go Traffic Light", description: "Green/yellow/red by criteria", bestFor: "Pipeline screening" },
+      { name: "Before/After Coverage", description: "Slider comparison", bestFor: "Expansion planning" }
+    ]}
+  ];
+
+  const keyFormulas = [
+    { name: "Sales Efficiency", formula: "Card Sales ÷ Trade Area Population" },
+    { name: "Growth Momentum", formula: "Current YoY% × Previous YoY%" },
+    { name: "Customer Value", formula: "Card Sales ÷ Unique Customers" },
+    { name: "Visit Intensity", formula: "Transactions ÷ Unique Customers" },
+    { name: "Composite Score", formula: "(Growth × 0.25) + (AOV × 0.20) + (Rank × 0.20) + (CustGrowth × 0.15) + (TradeArea × 0.10) + (Concentration × 0.10)" },
+    { name: "Translation Factor", formula: "Client National Avg ÷ Competitor National Avg" }
+  ];
+
+  const keyPrinciples = [
+    { icon: Search, title: "Start with Competitive Intelligence", description: "Competitor success validates market demand" },
+    { icon: BarChart3, title: "Normalize Everything", description: "Raw numbers lie about relative performance" },
+    { icon: Navigation, title: "Understand Customer Journeys", description: "The 'why' matters as much as the 'what'" },
+    { icon: TrendingUp, title: "Prioritize Growth", description: "Growing markets beat declining markets" },
+    { icon: Map, title: "Visualize Spatially", description: "Interactive maps reveal invisible patterns" },
+    { icon: Award, title: "Score Systematically", description: "Weighted criteria force explicit tradeoffs" },
+    { icon: Layers, title: "Check for Cannibalization", description: "Incremental dollars matter most" },
+    { icon: Zap, title: "End with Action", description: "Analysis without execution is worthless" }
+  ];
+
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: BookOpen },
+    { id: 'process', label: '12-Step Process', icon: Layers },
+    { id: 'maps', label: 'Map Catalog', icon: Map },
+    { id: 'formulas', label: 'Formulas', icon: Calculator },
+    { id: 'principles', label: 'Principles', icon: Lightbulb }
+  ];
+
+  const renderStepCard = (step) => {
+    const isExpanded = expandedStep === step.id;
+    const Icon = step.icon;
+    
+    return (
+      <div key={step.id} className="mb-4 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl" style={{ borderLeft: `4px solid ${step.color}` }}>
+        <button
+          onClick={() => setExpandedStep(isExpanded ? null : step.id)}
+          className="w-full p-5 bg-white flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${step.color}15` }}>
+              <Icon size={24} style={{ color: step.color }} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: step.color }}>
+                  STEP {step.id}
+                </span>
+                <span className="text-xs text-gray-500 font-medium">{step.phase}</span>
+              </div>
+              <h3 className="text-lg font-bold text-gray-800">{step.title}</h3>
+            </div>
+          </div>
+          <ChevronDown size={24} className={`text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+        </button>
+        
+        {isExpanded && (
+          <div className="bg-gray-50 border-t border-gray-100">
+            {/* Key Action Banner */}
+            <div className="p-5 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
+              <div className="flex items-start gap-3">
+                <Target size={20} className="mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-xs font-bold text-gray-300 mb-1">KEY ACTION</div>
+                  <p className="text-sm leading-relaxed">{step.keyAction}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Targeted Insight */}
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Eye size={16} style={{ color: step.color }} />
+                  <span className="text-xs font-bold text-gray-600">TARGETED INSIGHT</span>
+                </div>
+                <p className="text-sm text-gray-700">{step.targetedInsight}</p>
+              </div>
+
+              {/* Definition */}
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <BookOpen size={16} style={{ color: step.color }} />
+                  <span className="text-xs font-bold text-gray-600">DEFINITION</span>
+                </div>
+                <p className="text-sm text-gray-700">{step.definition}</p>
+              </div>
+            </div>
+
+            {/* Expandable Sections */}
+            <div className="px-5 pb-5 space-y-2">
+              {/* Input/Output/Deliverable */}
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                <button
+                  onClick={() => toggleSubSection(step.id, 'io')}
+                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Layers size={16} style={{ color: step.color }} />
+                    <span className="text-sm font-bold text-gray-700">Input / Output / Deliverable</span>
+                  </div>
+                  <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-io`] ? 'rotate-90' : ''}`} />
+                </button>
+                {expandedSubSection[`${step.id}-io`] && (
+                  <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+                    <div>
+                      <div className="text-xs font-bold text-green-600 mb-1">INPUT</div>
+                      <p className="text-sm text-gray-600">{step.input}</p>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-blue-600 mb-1">OUTPUT</div>
+                      <p className="text-sm text-gray-600">{step.output}</p>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-purple-600 mb-1">DELIVERABLE</div>
+                      <p className="text-sm text-gray-600">{step.deliverable}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Directive */}
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                <button
+                  onClick={() => toggleSubSection(step.id, 'directive')}
+                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <AlertCircle size={16} style={{ color: step.color }} />
+                    <span className="text-sm font-bold text-gray-700">Directive & Objective</span>
+                  </div>
+                  <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-directive`] ? 'rotate-90' : ''}`} />
+                </button>
+                {expandedSubSection[`${step.id}-directive`] && (
+                  <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+                    <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                      <div className="text-xs font-bold text-amber-700 mb-1">DIRECTIVE</div>
+                      <p className="text-sm text-gray-700">{step.directive}</p>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-gray-600 mb-1">OBJECTIVE</div>
+                      <p className="text-sm text-gray-600">{step.objective}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Visual Logic & Map Spec */}
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                <button
+                  onClick={() => toggleSubSection(step.id, 'map')}
+                  className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Map size={16} style={{ color: step.color }} />
+                    <span className="text-sm font-bold text-gray-700">Interactive Map Specification</span>
+                  </div>
+                  <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-map`] ? 'rotate-90' : ''}`} />
+                </button>
+                {expandedSubSection[`${step.id}-map`] && (
+                  <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+                    <div className="mb-3 p-3 rounded-lg" style={{ backgroundColor: `${step.color}10` }}>
+                      <div className="text-xs font-bold mb-1" style={{ color: step.color }}>VISUAL LOGIC</div>
+                      <p className="text-sm text-gray-700">{step.visualLogic}</p>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex gap-2">
+                        <span className="font-bold text-gray-500 w-28 flex-shrink-0">Map Type:</span>
+                        <span className="text-gray-700">{step.mapType}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold text-gray-500 w-28 flex-shrink-0">Shows:</span>
+                        <span className="text-gray-700">{step.mapDescription}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold text-gray-500 w-28 flex-shrink-0">Data Points:</span>
+                        <span className="text-gray-700">{step.dataPoints}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold text-gray-500 w-28 flex-shrink-0">Interactive:</span>
+                        <span className="text-gray-700">{step.interactiveFeatures}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <span className="font-bold text-gray-500 w-28 flex-shrink-0">Best For:</span>
+                        <span className="font-medium" style={{ color: step.color }}>{step.bestFor}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Additional Tables (Step-specific) */}
+              {step.dataPointsTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'dataTable')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <BarChart3 size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Key Data Points to Collect</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-dataTable`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-dataTable`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Metric</th>
+                            <th className="pb-2 font-bold">Description</th>
+                            <th className="pb-2 font-bold">Purpose</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.dataPointsTable.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.metric}</td>
+                              <td className="py-2 text-gray-600">{row.description}</td>
+                              <td className="py-2 text-gray-600">{row.purpose}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.classificationTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'classTable')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Target size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Trade Area Classification Framework</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-classTable`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-classTable`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Classification</th>
+                            <th className="pb-2 font-bold"># Zip Codes</th>
+                            <th className="pb-2 font-bold">Top Zip %</th>
+                            <th className="pb-2 font-bold">Implication</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.classificationTable.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.classification}</td>
+                              <td className="py-2 text-gray-600">{row.zipCodes}</td>
+                              <td className="py-2 text-gray-600">{row.concentration}</td>
+                              <td className="py-2 text-gray-600">{row.implication}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.correlationInsights && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'correlations')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <TrendingUp size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Demographic Correlation Insights</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-correlations`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-correlations`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-2">
+                      {step.correlationInsights.map((item, i) => (
+                        <div key={i} className="flex gap-3 p-2 bg-gray-50 rounded-lg">
+                          <span className="font-bold text-purple-600 text-sm whitespace-nowrap">{item.correlation}</span>
+                          <span className="text-sm text-gray-600">{item.insight}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.tripTypeTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'tripType')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Navigation size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Trip Type Classification</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-tripType`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-tripType`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Trip Type</th>
+                            <th className="pb-2 font-bold">Co-Shopping Rate</th>
+                            <th className="pb-2 font-bold">Revenue Driver</th>
+                            <th className="pb-2 font-bold">Site Strategy</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.tripTypeTable.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.type}</td>
+                              <td className="py-2 text-gray-600">{row.coShoppingRate}</td>
+                              <td className="py-2 text-gray-600">{row.revenueDriver}</td>
+                              <td className="py-2 text-gray-600">{row.siteStrategy}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.normalizationFormulas && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'normFormulas')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Calculator size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Normalization Formulas</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-normFormulas`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-normFormulas`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Metric</th>
+                            <th className="pb-2 font-bold">Formula</th>
+                            <th className="pb-2 font-bold">Reveals</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.normalizationFormulas.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.metric}</td>
+                              <td className="py-2 text-gray-600 font-mono text-xs">{row.formula}</td>
+                              <td className="py-2 text-gray-600">{row.reveals}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.benchmarkTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'benchmarks')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <BarChart3 size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Benchmark Ranges (Coffee/QSR)</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-benchmarks`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-benchmarks`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Metric</th>
+                            <th className="pb-2 font-bold text-red-500">Poor</th>
+                            <th className="pb-2 font-bold text-yellow-600">Average</th>
+                            <th className="pb-2 font-bold text-green-500">Good</th>
+                            <th className="pb-2 font-bold text-emerald-600">Excellent</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.benchmarkTable.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.metric}</td>
+                              <td className="py-2 text-red-500">{row.poor}</td>
+                              <td className="py-2 text-yellow-600">{row.average}</td>
+                              <td className="py-2 text-green-500">{row.good}</td>
+                              <td className="py-2 text-emerald-600">{row.excellent}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.proximityTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'proximity')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <GitBranch size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Competitive Proximity Framework</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-proximity`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-proximity`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Distance</th>
+                            <th className="pb-2 font-bold">Pressure</th>
+                            <th className="pb-2 font-bold">Strategic Implication</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.proximityTable.map((row, i) => (
+                            <tr key={i} className={`border-b border-gray-50 ${row.pressure === 'Optimal' ? 'bg-green-50' : ''}`}>
+                              <td className="py-2 font-medium text-gray-800">{row.distance}</td>
+                              <td className={`py-2 font-medium ${row.pressure === 'Optimal' ? 'text-green-600' : row.pressure === 'Very High' ? 'text-red-500' : 'text-gray-600'}`}>{row.pressure}</td>
+                              <td className="py-2 text-gray-600">{row.implication}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.screeningCriteria && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'screening')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Filter size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Primary Screening Criteria</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-screening`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-screening`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Criterion</th>
+                            <th className="pb-2 font-bold">Threshold</th>
+                            <th className="pb-2 font-bold">Priority</th>
+                            <th className="pb-2 font-bold">Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.screeningCriteria.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.criterion}</td>
+                              <td className="py-2 text-gray-600">{row.threshold}</td>
+                              <td className={`py-2 font-medium ${row.priority === 'Critical' ? 'text-red-500' : row.priority === 'High' ? 'text-orange-500' : 'text-gray-500'}`}>{row.priority}</td>
+                              <td className="py-2 text-gray-500 text-xs">{row.notes}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.formulaComponents && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'revenueFormula')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <DollarSign size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Revenue Projection Formula</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-revenueFormula`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-revenueFormula`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+                      <div className="p-3 bg-blue-50 rounded-lg mb-3 text-sm font-mono text-blue-800">
+                        {step.revenueFormula}
+                      </div>
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Component</th>
+                            <th className="pb-2 font-bold">Formula/Range</th>
+                            <th className="pb-2 font-bold">Application</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.formulaComponents.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.component}</td>
+                              <td className="py-2 text-gray-600 font-mono text-xs">{row.formula}</td>
+                              <td className="py-2 text-gray-600">{row.application}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.scoringWeights && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'weights')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Award size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Recommended Scoring Weights</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-weights`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-weights`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Criterion</th>
+                            <th className="pb-2 font-bold">Weight</th>
+                            <th className="pb-2 font-bold">Range</th>
+                            <th className="pb-2 font-bold">Rationale</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.scoringWeights.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.criterion}</td>
+                              <td className="py-2 font-bold text-orange-600">{row.weight}</td>
+                              <td className="py-2 text-gray-600">{row.range}</td>
+                              <td className="py-2 text-gray-600">{row.rationale}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.cannibalizationTable && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'cannibalization')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Layers size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Cannibalization Risk Thresholds</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-cannibalization`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-cannibalization`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Overlap</th>
+                            <th className="pb-2 font-bold">Risk</th>
+                            <th className="pb-2 font-bold">Recommendation</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.cannibalizationTable.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-medium text-gray-800">{row.overlap}</td>
+                              <td className={`py-2 font-medium ${row.risk === 'Low' ? 'text-green-500' : row.risk === 'Moderate' ? 'text-yellow-500' : row.risk === 'High' ? 'text-orange-500' : 'text-red-500'}`}>{row.risk}</td>
+                              <td className="py-2 text-gray-600">{row.recommendation}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.implementationTimeline && (
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => toggleSubSection(step.id, 'timeline')}
+                    className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileText size={16} style={{ color: step.color }} />
+                      <span className="text-sm font-bold text-gray-700">Implementation Timeline</span>
+                    </div>
+                    <ChevronRight size={18} className={`text-gray-400 transition-transform ${expandedSubSection[`${step.id}-timeline`] ? 'rotate-90' : ''}`} />
+                  </button>
+                  {expandedSubSection[`${step.id}-timeline`] && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3 overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs text-gray-500 border-b">
+                            <th className="pb-2 font-bold">Phase</th>
+                            <th className="pb-2 font-bold">Timeline</th>
+                            <th className="pb-2 font-bold">Actions</th>
+                            <th className="pb-2 font-bold">Deliverable</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {step.implementationTimeline.map((row, i) => (
+                            <tr key={i} className="border-b border-gray-50">
+                              <td className="py-2 font-bold text-gray-800">{row.phase}</td>
+                              <td className="py-2 font-medium text-gray-700">{row.timeline}</td>
+                              <td className="py-2 text-gray-600">{row.actions}</td>
+                              <td className="py-2 text-gray-600">{row.deliverable}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {step.criticalAlerts && (
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle size={16} className="text-amber-600" />
+                    <span className="text-sm font-bold text-amber-800">Critical: Often Skipped But Essential</span>
+                  </div>
+                  <ul className="space-y-1">
+                    {step.criticalAlerts.map((alert, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-amber-700">
+                        <CheckCircle2 size={14} className="mt-0.5 flex-shrink-0" />
+                        {alert}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100" ref={contentRef}>
+      {/* Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+        <div className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-1 z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-emerald-500 flex items-center justify-center">
+                <MapPin size={20} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gray-800">Site Selection Toolkit</h1>
+                <p className="text-xs text-gray-500">12-Step Data-Driven Framework</p>
+              </div>
+            </div>
+            
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveSection(item.id)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      activeSection === item.id
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+
+          {/* Mobile Nav */}
+          {mobileMenuOpen && (
+            <nav className="md:hidden pt-3 pb-2 border-t border-gray-100 mt-3 space-y-1">
+              {navItems.map(item => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => { setActiveSection(item.id); setMobileMenuOpen(false); }}
+                    className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      activeSection === item.id
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        {/* Overview Section */}
+        {activeSection === 'overview' && (
+          <div className="space-y-8">
+            {/* Hero */}
+            <div className="text-center py-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-6">
+                <Zap size={16} />
+                Transforming Abstract Numbers into Decision-Grade Insight
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Comprehensive Retail<br />Site Selection Framework
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                A 12-step process for data-driven location intelligence, reverse-engineered from real-world retail sales performance analysis and competitive expansion strategies.
+              </p>
+              <button
+                onClick={() => setActiveSection('process')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all"
+              >
+                Explore the Framework
+                <ArrowRight size={18} />
+              </button>
+            </div>
+
+            {/* Process Flow Visual */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 overflow-x-auto">
+              <h2 className="text-lg font-bold text-gray-800 mb-4">Framework Overview</h2>
+              <div className="flex gap-2 min-w-max pb-2">
+                {phases.map((phase, i) => (
+                  <div key={i} className="flex-1 min-w-[100px]">
+                    <div className="text-xs font-bold text-white text-center py-1 rounded-t-lg" style={{ backgroundColor: phase.color }}>
+                      {phase.name}
+                    </div>
+                    <div className="border border-t-0 border-gray-200 rounded-b-lg p-2 space-y-1" style={{ borderTopColor: phase.color }}>
+                      {phase.steps.map(stepNum => {
+                        const step = steps.find(s => s.id === stepNum);
+                        return (
+                          <div key={stepNum} className="text-xs p-1.5 bg-gray-50 rounded text-center text-gray-700">
+                            {stepNum}. {step?.title.split(' ').slice(0, 2).join(' ')}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Key Principles Grid */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Core Principles</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {keyPrinciples.map((principle, i) => {
+                  const Icon = principle.icon;
+                  return (
+                    <div key={i} className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-emerald-100 flex items-center justify-center mb-3">
+                        <Icon size={20} className="text-blue-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-800 mb-1">{principle.title}</h3>
+                      <p className="text-sm text-gray-600">{principle.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-5 text-white">
+                <div className="text-3xl font-bold">12</div>
+                <div className="text-sm opacity-80">Strategic Steps</div>
+              </div>
+              <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-5 text-white">
+                <div className="text-3xl font-bold">17+</div>
+                <div className="text-sm opacity-80">Map Visualizations</div>
+              </div>
+              <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white">
+                <div className="text-3xl font-bold">50+</div>
+                <div className="text-sm opacity-80">Data Points</div>
+              </div>
+              <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-5 text-white">
+                <div className="text-3xl font-bold">6</div>
+                <div className="text-sm opacity-80">Key Formulas</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Process Section */}
+        {activeSection === 'process' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">12-Step Process</h2>
+                <p className="text-gray-600">Click any step to expand detailed methodology</p>
+              </div>
+              <button
+                onClick={() => setExpandedStep(expandedStep ? null : 1)}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                {expandedStep ? 'Collapse All' : 'Expand First'}
+              </button>
+            </div>
+            
+            {steps.map(step => renderStepCard(step))}
+          </div>
+        )}
+
+        {/* Map Catalog Section */}
+        {activeSection === 'maps' && (
+          <div className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Interactive Map Catalog</h2>
+              <p className="text-gray-600">Visualizations that show how money and people move through space</p>
+            </div>
+
+            {mapCatalog.map((category, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-5 py-3">
+                  <h3 className="text-white font-bold">{category.category} Maps</h3>
+                </div>
+                <div className="divide-y divide-gray-100">
+                  {category.maps.map((map, j) => (
+                    <div key={j} className="p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <Map size={16} className="text-blue-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-800">{map.name}</h4>
+                            <p className="text-sm text-gray-600">{map.description}</p>
+                          </div>
+                        </div>
+                        <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full whitespace-nowrap">
+                          {map.bestFor}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Formulas Section */}
+        {activeSection === 'formulas' && (
+          <div className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Key Formulas & Calculations</h2>
+              <p className="text-gray-600">Essential equations for site selection analysis</p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="divide-y divide-gray-100">
+                {keyFormulas.map((formula, i) => (
+                  <div key={i} className="p-5 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                        <Calculator size={16} className="text-purple-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-800">{formula.name}</h3>
+                    </div>
+                    <div className="ml-11 p-3 bg-gray-50 rounded-lg font-mono text-sm text-gray-700">
+                      {formula.formula}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-600 to-emerald-500 rounded-xl p-6 text-white">
+              <h3 className="font-bold text-lg mb-2">Master Formula: Composite Site Score</h3>
+              <p className="opacity-90 text-sm mb-4">The weighted combination that produces defensible site rankings</p>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 font-mono text-sm">
+                Score = (YoY_Growth × 0.25) + (AOV × 0.20) + (Brand_Rank × 0.20) + (Customer_Growth × 0.15) + (Trade_Area × 0.10) + (Concentration × 0.10)
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Principles Section */}
+        {activeSection === 'principles' && (
+          <div className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Guiding Principles</h2>
+              <p className="text-gray-600">The foundational wisdom behind successful site selection</p>
+            </div>
+
+            <div className="space-y-4">
+              {keyPrinciples.map((principle, i) => {
+                const Icon = principle.icon;
+                return (
+                  <div key={i} className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-blue-500">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <Icon size={24} className="text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-800 mb-1">{i + 1}. {principle.title}</h3>
+                        <p className="text-gray-600">{principle.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-gray-800 rounded-xl p-6 text-white">
+              <h3 className="font-bold text-lg mb-4">Remember: Analysis Without Execution is Worthless</h3>
+              <p className="opacity-80">
+                The framework is designed to be applied iteratively. As new data becomes available, earlier steps can be revisited to refine conclusions. The interactive map visualizations serve as both analytical tools and communication devices, enabling stakeholders to interrogate the data and build confidence in recommendations.
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white mt-12">
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          <div className="text-center text-gray-500 text-sm">
+            <p className="font-medium text-gray-700 mb-1">Comprehensive Retail Site Selection Framework</p>
+            <p>Reverse-engineered from Retail Sales Performance Analysis & Dutch Brothers Omaha Expansion Strategy</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default SiteSelectionToolkit;
