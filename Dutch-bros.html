@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dutch Bros Site Selection Analysis | Windfield Real Estate</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0D9F4F;
+      --primary-dark: #087A3C;
+      --primary-light: #12C760;
+      --primary-muted: #0D9F4F15;
+      --primary-glow: #0D9F4F40;
+      --accent: #FFD93D;
+      --dark: #0A1F14;
+      --dark-soft: #132B1E;
+      --gray-900: #1A2E22;
+      --gray-800: #2A4035;
+      --gray-700: #3D5548;
+      --gray-600: #54695C;
+      --gray-500: #7A8F82;
+      --gray-400: #A3B5AA;
+      --gray-300: #C8D5CC;
+      --gray-200: #E3EBE6;
+      --gray-100: #F4F8F5;
+      --white: #FFFFFF;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --gradient-hero: linear-gradient(135deg, var(--dark) 0%, var(--dark-soft) 50%, #1A3D28 100%);
+      --gradient-card: linear-gradient(180deg, rgba(13, 159, 79, 0.08) 0%, rgba(13, 159, 79, 0.02) 100%);
+      --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    /* Noise Overlay */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--noise);
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      background: rgba(10, 31, 20, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--primary-glow);
+      transition: all 0.3s ease;
+    }
+
+    nav.scrolled {
+      padding: 0.75rem 2rem;
+      background: rgba(10, 31, 20, 0.98);
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray-400);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--gradient-hero);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 8rem 2rem 4rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 80%;
+      height: 200%;
+      background: radial-gradient(ellipse, var(--primary-glow) 0%, transparent 70%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: linear-gradient(to top, var(--gray-100), transparent);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    .hero-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-size: clamp(3rem, 6vw, 5rem);
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-text h1 span {
+      color: var(--primary-light);
+      display: block;
+    }
+
+    .hero-text p {
+      font-size: 1.25rem;
+      color: var(--gray-400);
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-muted);
+      border: 1px solid var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      color: var(--primary-light);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      animation: fadeInUp 0.8s ease forwards;
+      animation-delay: calc(var(--delay) * 0.1s);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .stat-card .value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .value.positive { color: var(--success); }
+    .stat-card .value.negative { color: var(--danger); }
+
+    .stat-card .label {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Section Styles */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .section-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      border-radius: 15px;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--gray-600);
+      max-width: 700px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    /* Executive Summary */
+    .executive-summary {
+      background: var(--white);
+      border-radius: 30px;
+      padding: 3rem;
+      box-shadow: 0 20px 60px rgba(13, 159, 79, 0.1);
+      border: 1px solid var(--gray-200);
+    }
+
+    .key-findings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .finding-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--gradient-card);
+      border-radius: 16px;
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+    }
+
+    .finding-item:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px var(--primary-glow);
+    }
+
+    .finding-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-muted);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .finding-content h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .finding-content p {
+      font-size: 1rem;
+      color: var(--gray-700);
+    }
+
+    /* Performance Table */
+    .performance-section {
+      background: linear-gradient(180deg, var(--gray-100) 0%, var(--white) 100%);
+    }
+
+    .performance-table-wrapper {
+      background: var(--white);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--gray-200);
+    }
+
+    .performance-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .performance-table th {
+      background: var(--dark);
+      color: var(--white);
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .performance-table td {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 0.95rem;
+    }
+
+    .performance-table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .performance-table tbody tr:hover {
+      background: var(--primary-muted);
+    }
+
+    .performance-table tbody tr.best-performer {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+    }
+
+    .performance-table tbody tr.worst-performer {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);
+    }
+
+    .change-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .change-badge.positive {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .change-badge.negative {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 45px;
+      height: 45px;
+      background: var(--primary-muted);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 0.9rem;
+    }
+
+    /* Demographics Section */
+    .demographics-section {
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demographics-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 20%, var(--primary-glow) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, var(--primary-glow) 0%, transparent 50%);
+    }
+
+    .demographics-section .section-title {
+      color: var(--white);
+    }
+
+    .demographics-section .section-subtitle {
+      color: var(--gray-500);
+    }
+
+    .demographics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .demo-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .demo-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .demo-card h4 {
+      color: var(--primary-light);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+
+    .demo-card .value {
+      color: var(--white);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-card .description {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+    }
+
+    /* Journey Analysis */
+    .journey-section {
+      background: var(--white);
+    }
+
+    .journey-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .journey-card {
+      background: var(--gray-100);
+      border-radius: 24px;
+      padding: 2rem;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .journey-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px var(--primary-glow);
+    }
+
+    .journey-card.best {
+      border-color: var(--success);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--gray-100) 100%);
+    }
+
+    .journey-card.worst {
+      border-color: var(--danger);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--gray-100) 100%);
+    }
+
+    .journey-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .journey-status {
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .journey-status.best {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .journey-status.worst {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+
+    .journey-card h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+
+    .journey-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .journey-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .journey-step-label {
+      width: 80px;
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      padding-top: 0.25rem;
+    }
+
+    .journey-step-content {
+      flex: 1;
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      border: 1px solid var(--gray-200);
+    }
+
+    .journey-insight {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--white);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .journey-insight strong {
+      color: var(--primary-dark);
+    }
+
+    /* Opportunity Analysis */
+    .opportunity-section {
+      background: linear-gradient(180deg, var(--gray-100) 0%, var(--white) 100%);
+    }
+
+    .opportunity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .opportunity-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .opportunity-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .opportunity-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .opportunity-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .opportunity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .opportunity-area {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+
+    .opportunity-level {
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .opportunity-level.high {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .opportunity-level.medium {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+
+    .opportunity-level.low {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+
+    .opportunity-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .metric {
+      text-align: center;
+      padding: 1rem;
+      background: var(--gray-100);
+      border-radius: 12px;
+    }
+
+    .metric-value {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+    }
+
+    /* Co-Tenancy Section */
+    .cotenancy-section {
+      background: var(--white);
+    }
+
+    .cotenancy-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .cotenancy-item {
+      background: var(--gray-100);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .cotenancy-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .cotenancy-item.complimentary {
+      border-color: var(--success);
+    }
+
+    .cotenancy-item.competitive {
+      border-color: var(--danger);
+    }
+
+    .cotenancy-score {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      margin: 0 auto 1rem;
+    }
+
+    .cotenancy-score.high {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .cotenancy-score.medium {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+
+    .cotenancy-score.low {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+
+    .cotenancy-name {
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .cotenancy-type {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+    }
+
+    /* Recommendations Section */
+    .recommendations-section {
+      background: var(--gradient-hero);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .recommendations-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -20%;
+      width: 80%;
+      height: 200%;
+      background: radial-gradient(ellipse, var(--primary-glow) 0%, transparent 70%);
+    }
+
+    .recommendations-section .section-title {
+      color: var(--white);
+    }
+
+    .recommendations-section .section-subtitle {
+      color: var(--gray-500);
+    }
+
+    .priority-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .priority-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .priority-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(10px);
+    }
+
+    .priority-item.avoid {
+      border-color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .priority-rank {
+      width: 70px;
+      height: 70px;
+      background: var(--primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.75rem;
+      color: var(--white);
+    }
+
+    .priority-item.avoid .priority-rank {
+      background: var(--danger);
+      font-size: 1.25rem;
+    }
+
+    .priority-content h4 {
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .priority-content p {
+      color: var(--gray-400);
+      font-size: 0.95rem;
+    }
+
+    .priority-score {
+      text-align: center;
+    }
+
+    .priority-score .label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .priority-score .value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--white);
+    }
+
+    /* Additional Data Section */
+    .additional-data-section {
+      background: var(--gray-100);
+    }
+
+    .data-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .data-category {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid var(--gray-200);
+    }
+
+    .data-category h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .data-list {
+      list-style: none;
+    }
+
+    .data-list li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .data-list li:last-child {
+      border-bottom: none;
+    }
+
+    .data-list .brand {
+      font-weight: 700;
+      color: var(--primary-dark);
+      min-width: 120px;
+    }
+
+    .data-list .description {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-text {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      color: var(--gray-600);
+      font-size: 0.85rem;
+    }
+
+    /* Scroll animations */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-text p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-stats {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .priority-item {
+        grid-template-columns: auto 1fr;
+        gap: 1.5rem;
+      }
+
+      .priority-score {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 6rem 1rem 3rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 4rem 1rem;
+      }
+
+      .performance-table {
+        font-size: 0.85rem;
+      }
+
+      .performance-table th,
+      .performance-table td {
+        padding: 1rem;
+      }
+
+      .journey-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise-overlay"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-content">
+      <div class="logo">
+        <div class="logo-icon">🏢</div>
+        <span>Windfield Real Estate</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#executive">Executive Summary</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#demographics">Demographics</a></li>
+        <li><a href="#journey">Customer Journey</a></li>
+        <li><a href="#opportunities">Opportunities</a></li>
+        <li><a href="#recommendations">Recommendations</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span>📊</span>
+          Windfield Real Estate | CenterCheck Data Analysis
+        </div>
+        <h1>Dutch Bros <span>Site Selection</span></h1>
+        <p>Competitive intelligence report analyzing Starbucks performance in the Omaha/Elkhorn market to identify optimal Dutch Bros expansion opportunities.</p>
+        <p style="font-size: 0.9rem; color: var(--gray-500);">Data Range: December 2024 - November 2025</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card" style="--delay: 1">
+          <div class="value">6</div>
+          <div class="label">Starbucks Locations Analyzed</div>
+        </div>
+        <div class="stat-card" style="--delay: 2">
+          <div class="value negative">5/6</div>
+          <div class="label">Locations Declining</div>
+        </div>
+        <div class="stat-card" style="--delay: 3">
+          <div class="value positive">+39.7%</div>
+          <div class="label">Best Performer Growth</div>
+        </div>
+        <div class="stat-card" style="--delay: 4">
+          <div class="value negative">-23.7%</div>
+          <div class="label">Worst Performer Decline</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Executive Summary -->
+  <section id="executive">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2 class="section-title">Executive Summary</h2>
+        <p class="section-subtitle">"What is our true market share within each candidate trade area, and where are the highest-value pockets of unmet demand?"</p>
+      </div>
+
+      <div class="executive-summary animate-on-scroll">
+        <p style="font-size: 1.1rem; color: var(--gray-700); margin-bottom: 2rem;">
+          This analysis examines six Starbucks locations in the Omaha/Elkhorn, Nebraska market using credit/debit card transaction data to inform Dutch Bros site selection. The data reveals significant performance variation across locations, with one standout growth location and several declining units presenting competitive opportunities.
+        </p>
+
+        <div class="key-findings">
+          <div class="finding-item">
+            <div class="finding-icon">🏆</div>
+            <div class="finding-content">
+              <h4>Best Performer</h4>
+              <p>18414 Evans St (+39.7% sales, 58th percentile nationally)</p>
+            </div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-icon">📉</div>
+            <div class="finding-content">
+              <h4>Weakest Performer</h4>
+              <p>815 N 204th Ave (-23.7% sales, 40th percentile nationally)</p>
+            </div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-icon">👥</div>
+            <div class="finding-content">
+              <h4>Target Customer</h4>
+              <p>35-44 yr olds, $151k+ income, affluent households</p>
+            </div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-icon">💳</div>
+            <div class="finding-content">
+              <h4>Avg Order Value</h4>
+              <p>$12.08 - $12.75 across locations</p>
+            </div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-icon">📈</div>
+            <div class="finding-content">
+              <h4>Market Trend</h4>
+              <p>5 of 6 locations declining; vulnerability for new entrant</p>
+            </div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-icon">🎯</div>
+            <div class="finding-content">
+              <h4>Primary Trade Area</h4>
+              <p>ZIP 68022 (Elkhorn) dominates 3 of 6 locations</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Section -->
+  <section id="performance" class="performance-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2 class="section-title">Competitive Performance</h2>
+        <p class="section-subtitle">"How are competitors performing around each candidate site, and how do their trends affect the upside or risk?"</p>
+      </div>
+
+      <div class="performance-table-wrapper animate-on-scroll">
+        <table class="performance-table">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Card Sales</th>
+              <th>YoY Change</th>
+              <th>Transactions</th>
+              <th>AOV</th>
+              <th>National Rank</th>
+              <th>State Rank</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="best-performer">
+              <td><strong>18414 Evans St, Elkhorn</strong></td>
+              <td>$2.3M</td>
+              <td><span class="change-badge positive">↑ +39.7%</span></td>
+              <td>189,076</td>
+              <td>$12.40</td>
+              <td><span class="rank-badge">58%</span></td>
+              <td>13/43</td>
+            </tr>
+            <tr>
+              <td><strong>15821 W Dodge Rd, Omaha</strong></td>
+              <td>$2M</td>
+              <td><span class="change-badge negative">↓ -7%</span></td>
+              <td>166,437</td>
+              <td>$12.23</td>
+              <td><span class="rank-badge">49%</span></td>
+              <td>17/43</td>
+            </tr>
+            <tr>
+              <td><strong>L Street Marketplace, Omaha</strong></td>
+              <td>$2M</td>
+              <td><span class="change-badge negative">↓ -11%</span></td>
+              <td>158,163</td>
+              <td>$12.65</td>
+              <td><span class="rank-badge">48%</span></td>
+              <td>20/43</td>
+            </tr>
+            <tr>
+              <td><strong>17810 W Center Rd, Omaha</strong></td>
+              <td>$1.8M</td>
+              <td><span class="change-badge negative">↓ -9.1%</span></td>
+              <td>147,833</td>
+              <td>$12.08</td>
+              <td><span class="rank-badge">41%</span></td>
+              <td>24/43</td>
+            </tr>
+            <tr class="worst-performer">
+              <td><strong>815 N 204th Ave, Elkhorn</strong></td>
+              <td>$1.8M</td>
+              <td><span class="change-badge negative">↓ -23.7%</span></td>
+              <td>136,988</td>
+              <td>$12.75</td>
+              <td><span class="rank-badge">40%</span></td>
+              <td>25/43</td>
+            </tr>
+            <tr>
+              <td><strong>5401 S 204th Ave, Elkhorn</strong></td>
+              <td>$1.4M</td>
+              <td><span class="change-badge negative">↓ -5%</span></td>
+              <td>116,122</td>
+              <td>$12.19</td>
+              <td><span class="rank-badge">30%</span></td>
+              <td>29/43</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div class="finding-item animate-on-scroll">
+          <div class="finding-icon" style="background: rgba(239, 68, 68, 0.15);">⚠️</div>
+          <div class="finding-content">
+            <h4 style="color: var(--danger);">High Opportunity</h4>
+            <p>815 N 204th Ave shows -23.7% decline with bottom-40% national ranking - vulnerable to competitive entry</p>
+          </div>
+        </div>
+        <div class="finding-item animate-on-scroll">
+          <div class="finding-icon" style="background: rgba(245, 158, 11, 0.15);">📊</div>
+          <div class="finding-content">
+            <h4 style="color: var(--warning);">Moderate Opportunity</h4>
+            <p>L Street Marketplace (-11%) and W Center Rd (-9.1%) showing sustained weakness</p>
+          </div>
+        </div>
+        <div class="finding-item animate-on-scroll">
+          <div class="finding-icon" style="background: rgba(16, 185, 129, 0.15);">🚫</div>
+          <div class="finding-content">
+            <h4 style="color: var(--success);">Caution Zone</h4>
+            <p>Evans St location thriving (+39.7%) - avoid direct competition; consider complementary positioning</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demographics Section -->
+  <section id="demographics" class="demographics-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number" style="background: var(--white); color: var(--primary);">3</div>
+        <h2 class="section-title">Customer Demographics</h2>
+        <p class="section-subtitle">"Which customer segments does this site attract, and how well do they match our target customer profile?"</p>
+      </div>
+
+      <div class="demographics-grid">
+        <div class="demo-card animate-on-scroll">
+          <h4>Core Age Segment</h4>
+          <div class="value">35-44 years</div>
+          <div class="description">24-31% of shoppers - Established adults with families</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Secondary Age</h4>
+          <div class="value">45-54 years</div>
+          <div class="description">21-25% - Peak earning years, consistent purchasers</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Gender Split</h4>
+          <div class="value">50-55% Female</div>
+          <div class="description">Balanced mix with slight female skew at top performers</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Income Level</h4>
+          <div class="value">$151k+</div>
+          <div class="description">High income dominant - Premium customer base</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Household Wealth</h4>
+          <div class="value">$500k+</div>
+          <div class="description">Affluent households - Strong discretionary spending</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Ethnicity</h4>
+          <div class="value">81-97% Caucasian</div>
+          <div class="description">Evans St shows highest Asian representation (12%)</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Household Type</h4>
+          <div class="value">Multi-Generation</div>
+          <div class="description">Families with kids - 2+ adults common</div>
+        </div>
+        <div class="demo-card animate-on-scroll">
+          <h4>Key Insight</h4>
+          <div class="value" style="font-size: 1.1rem;">Income Gap</div>
+          <div class="description">Shoppers are consistently lower income than local residents - price sensitivity exists</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);" class="animate-on-scroll">
+        <h3 style="color: var(--primary-light); margin-bottom: 1rem; font-family: 'DM Sans', sans-serif;">Dutch Bros Fit Assessment</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; color: var(--gray-300);">
+          <div>
+            <strong style="color: var(--success);">✓ ALIGNMENT:</strong>
+            <p style="margin-top: 0.5rem;">High-income families seeking convenient, quick-service options match Dutch Bros' drive-thru model</p>
+          </div>
+          <div>
+            <strong style="color: var(--primary-light);">✓ OPPORTUNITY:</strong>
+            <p style="margin-top: 0.5rem;">Younger demos (18-34 at 28-33%) align with Dutch Bros' energetic brand positioning</p>
+          </div>
+          <div>
+            <strong style="color: var(--warning);">⚡ CONSIDERATION:</strong>
+            <p style="margin-top: 0.5rem;">Price sensitivity exists even in affluent areas - value perception matters</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer Journey Section -->
+  <section id="journey" class="journey-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2 class="section-title">Customer Journey Analysis</h2>
+        <p class="section-subtitle">"Where else do our customers shop before and after visiting, and how does that journey influence site quality?"</p>
+      </div>
+
+      <div class="journey-cards">
+        <div class="journey-card best animate-on-scroll">
+          <div class="journey-card-header">
+            <span class="journey-status best">Best Performer</span>
+            <h4>18414 Evans St, Elkhorn</h4>
+          </div>
+          <div class="journey-flow">
+            <div class="journey-step">
+              <div class="journey-step-label">Before</div>
+              <div class="journey-step-content">
+                Costco Gasoline (1.09%), Target (1.09%), Chipotle Mexican Grill (0.79%)
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-label">After</div>
+              <div class="journey-step-content">
+                Costco Optical (0.55%), Costco Gasoline (0.52%), Target (0.5%)
+              </div>
+            </div>
+          </div>
+          <div class="journey-insight">
+            <strong>Pattern:</strong> Strong Costco/Target corridor - suggests power center anchoring drives success
+          </div>
+        </div>
+
+        <div class="journey-card animate-on-scroll">
+          <div class="journey-card-header">
+            <h4>15821 W Dodge Rd, Omaha</h4>
+          </div>
+          <div class="journey-flow">
+            <div class="journey-step">
+              <div class="journey-step-label">Before</div>
+              <div class="journey-step-content">
+                Walmart Supercenter (0.24%), Hy-Vee locations (0.48% combined)
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-label">After</div>
+              <div class="journey-step-content">
+                Hy-Vee locations (0.42% combined)
+              </div>
+            </div>
+          </div>
+          <div class="journey-insight">
+            <strong>Pattern:</strong> Grocery-anchored trips - morning/convenience driven
+          </div>
+        </div>
+
+        <div class="journey-card worst animate-on-scroll">
+          <div class="journey-card-header">
+            <span class="journey-status worst">Weakest</span>
+            <h4>815 N 204th Ave, Elkhorn</h4>
+          </div>
+          <div class="journey-flow">
+            <div class="journey-step">
+              <div class="journey-step-label">Before</div>
+              <div class="journey-step-content">
+                Hy-Vee (1.11%), Casey's General Stores (0.99%), Family Fare (0.86%)
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-label">After</div>
+              <div class="journey-step-content">
+                Family Fare (1.83%), Hy-Vee (1.4%), Casey's (0.59%)
+              </div>
+            </div>
+          </div>
+          <div class="journey-insight">
+            <strong>Pattern:</strong> Convenience store/grocery trips - competing with Casey's coffee offerings
+          </div>
+        </div>
+
+        <div class="journey-card animate-on-scroll">
+          <div class="journey-card-header">
+            <h4>17810 W Center Rd, Omaha</h4>
+          </div>
+          <div class="journey-flow">
+            <div class="journey-step">
+              <div class="journey-step-label">Before</div>
+              <div class="journey-step-content">
+                Target (1.68%), Walmart Supercenter (0.73%), Casey's (0.71%)
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-label">After</div>
+              <div class="journey-step-content">
+                Target (0.92%), Chick-fil-A (0.71%), Walmart (0.62%)
+              </div>
+            </div>
+          </div>
+          <div class="journey-insight">
+            <strong>Pattern:</strong> Strong Target anchor - QSR corridor with Chick-fil-A synergy
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem; padding: 2rem; background: var(--gray-100); border-radius: 20px;" class="animate-on-scroll">
+        <h3 style="color: var(--dark); margin-bottom: 1.5rem; font-family: 'DM Sans', sans-serif;">Co-Tenant Implications for Dutch Bros</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div>
+            <strong style="color: var(--primary-dark);">🎯 IDEAL ANCHORS</strong>
+            <p style="margin-top: 0.5rem; color: var(--gray-600);">Target, Costco, Walmart Supercenter - these drive high cross-shopping with coffee</p>
+          </div>
+          <div>
+            <strong style="color: var(--primary-dark);">🍔 QSR SYNERGY</strong>
+            <p style="margin-top: 0.5rem; color: var(--gray-600);">Chick-fil-A and Chipotle presence suggests appetite for premium QSR</p>
+          </div>
+          <div>
+            <strong style="color: var(--danger);">⚔️ COMPETITIVE THREAT</strong>
+            <p style="margin-top: 0.5rem; color: var(--gray-600);">Casey's General Stores capturing coffee occasions - Dutch Bros can compete on quality/speed</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opportunities Section -->
+  <section id="opportunities" class="opportunity-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2 class="section-title">Void & Opportunity Analysis</h2>
+        <p class="section-subtitle">"Where does demonstrated consumer spend outstrip the quality of existing supply, creating a true void?"</p>
+      </div>
+
+      <div class="opportunity-grid">
+        <div class="opportunity-card animate-on-scroll">
+          <div class="opportunity-header">
+            <div class="opportunity-area">Elkhorn (Evans St Area)</div>
+            <span class="opportunity-level high">High</span>
+          </div>
+          <div class="opportunity-metrics">
+            <div class="metric">
+              <div class="metric-value" style="color: var(--success);">+20.4%</div>
+              <div class="metric-label">Pop Growth</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" style="color: var(--success);">+39.7%</div>
+              <div class="metric-label">Starbucks Trend</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-600);">Growth outpacing supply - demand exists but strong Starbucks presence</p>
+        </div>
+
+        <div class="opportunity-card animate-on-scroll">
+          <div class="opportunity-header">
+            <div class="opportunity-area">W Center Rd (68130)</div>
+            <span class="opportunity-level high">High</span>
+          </div>
+          <div class="opportunity-metrics">
+            <div class="metric">
+              <div class="metric-value" style="color: var(--success);">+9.4%</div>
+              <div class="metric-label">Pop Growth</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" style="color: var(--danger);">-9.1%</div>
+              <div class="metric-label">Starbucks Trend</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-600);">Unmet demand - growing population, declining Starbucks</p>
+        </div>
+
+        <div class="opportunity-card animate-on-scroll">
+          <div class="opportunity-header">
+            <div class="opportunity-area">N 204th Ave (68022)</div>
+            <span class="opportunity-level high">High</span>
+          </div>
+          <div class="opportunity-metrics">
+            <div class="metric">
+              <div class="metric-value" style="color: var(--warning);">+3.2%</div>
+              <div class="metric-label">Pop Growth</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" style="color: var(--danger);">-23.7%</div>
+              <div class="metric-label">Starbucks Trend</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-600);">Starbucks failing dramatically - prime capture opportunity</p>
+        </div>
+
+        <div class="opportunity-card animate-on-scroll">
+          <div class="opportunity-header">
+            <div class="opportunity-area">W Dodge Rd (68118)</div>
+            <span class="opportunity-level low">Low</span>
+          </div>
+          <div class="opportunity-metrics">
+            <div class="metric">
+              <div class="metric-value" style="color: var(--danger);">-16.1%</div>
+              <div class="metric-label">Pop Growth</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value" style="color: var(--danger);">-7%</div>
+              <div class="metric-label">Starbucks Trend</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-600);">Declining market - population loss signals lower priority</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Co-Tenancy Section -->
+  <section class="cotenancy-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <h2 class="section-title">Co-Tenancy Matrix</h2>
+        <p class="section-subtitle">"Which neighboring uses enhance or weaken performance at this site?"</p>
+      </div>
+
+      <div class="cotenancy-matrix">
+        <div class="cotenancy-item complimentary animate-on-scroll">
+          <div class="cotenancy-score high">10</div>
+          <div class="cotenancy-name">Shaw's</div>
+          <div class="cotenancy-type">Grocery • Complimentary</div>
+        </div>
+        <div class="cotenancy-item complimentary animate-on-scroll">
+          <div class="cotenancy-score high">9</div>
+          <div class="cotenancy-name">Cashwise</div>
+          <div class="cotenancy-type">Grocery • Complimentary</div>
+        </div>
+        <div class="cotenancy-item complimentary animate-on-scroll">
+          <div class="cotenancy-score high">9</div>
+          <div class="cotenancy-name">Food Depot</div>
+          <div class="cotenancy-type">Grocery • Complimentary</div>
+        </div>
+        <div class="cotenancy-item animate-on-scroll">
+          <div class="cotenancy-score medium">8</div>
+          <div class="cotenancy-name">City Market</div>
+          <div class="cotenancy-type">Grocery • Slight Compliment</div>
+        </div>
+        <div class="cotenancy-item animate-on-scroll">
+          <div class="cotenancy-score medium">8</div>
+          <div class="cotenancy-name">Sendik's</div>
+          <div class="cotenancy-type">Grocery • Slight Compliment</div>
+        </div>
+        <div class="cotenancy-item animate-on-scroll">
+          <div class="cotenancy-score medium">7</div>
+          <div class="cotenancy-name">Carrs</div>
+          <div class="cotenancy-type">Grocery • Slight Compliment</div>
+        </div>
+        <div class="cotenancy-item animate-on-scroll">
+          <div class="cotenancy-score medium">7</div>
+          <div class="cotenancy-name">Pavilions</div>
+          <div class="cotenancy-type">Grocery • Slight Compliment</div>
+        </div>
+        <div class="cotenancy-item competitive animate-on-scroll">
+          <div class="cotenancy-score low">4</div>
+          <div class="cotenancy-name">Stop & Shop</div>
+          <div class="cotenancy-type">Grocery • Competitive</div>
+        </div>
+        <div class="cotenancy-item competitive animate-on-scroll">
+          <div class="cotenancy-score low">4</div>
+          <div class="cotenancy-name">Presidente</div>
+          <div class="cotenancy-type">Grocery • Competitive</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recommendations Section -->
+  <section id="recommendations" class="recommendations-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number" style="background: var(--white); color: var(--primary);">★</div>
+        <h2 class="section-title">Strategic Recommendations</h2>
+        <p class="section-subtitle">Priority site rankings for Dutch Bros expansion in the Omaha/Elkhorn market</p>
+      </div>
+
+      <div class="priority-list">
+        <div class="priority-item animate-on-scroll">
+          <div class="priority-rank">#1</div>
+          <div class="priority-content">
+            <h4>N 204th Ave Corridor</h4>
+            <p>Starbucks at -23.7% with grocery anchor; capture dissatisfied customers. High-income households with demonstrated coffee demand.</p>
+          </div>
+          <div class="priority-score">
+            <div class="label">Starbucks Decline</div>
+            <div class="value" style="color: var(--danger);">-23.7%</div>
+          </div>
+        </div>
+
+        <div class="priority-item animate-on-scroll">
+          <div class="priority-rank">#2</div>
+          <div class="priority-content">
+            <h4>W Center Rd (68130)</h4>
+            <p>Target anchor with +9.4% population growth; Starbucks underperforming at -9.1%. Strong QSR corridor with Chick-fil-A.</p>
+          </div>
+          <div class="priority-score">
+            <div class="label">Pop Growth</div>
+            <div class="value" style="color: var(--success);">+9.4%</div>
+          </div>
+        </div>
+
+        <div class="priority-item animate-on-scroll">
+          <div class="priority-rank">#3</div>
+          <div class="priority-content">
+            <h4>L Street Marketplace</h4>
+            <p>Starbucks at -11%; established retail center with proven traffic patterns. Moderate risk, solid fundamentals.</p>
+          </div>
+          <div class="priority-score">
+            <div class="label">Starbucks Decline</div>
+            <div class="value" style="color: var(--warning);">-11%</div>
+          </div>
+        </div>
+
+        <div class="priority-item avoid animate-on-scroll">
+          <div class="priority-rank">AVOID</div>
+          <div class="priority-content">
+            <h4>Evans St Immediate Area</h4>
+            <p>Starbucks thriving at +39.7% - high competitive risk. Wait for market maturation or position complementarily.</p>
+          </div>
+          <div class="priority-score">
+            <div class="label">Starbucks Growth</div>
+            <div class="value" style="color: var(--success);">+39.7%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Additional Data Section -->
+  <section class="additional-data-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-number">+</div>
+        <h2 class="section-title">Enhance Your Analysis</h2>
+        <p class="section-subtitle">Additional retailer data sources to strengthen Dutch Bros site selection</p>
+      </div>
+
+      <div class="data-categories">
+        <div class="data-category animate-on-scroll">
+          <h4>Direct Coffee Competitors</h4>
+          <ul class="data-list">
+            <li>
+              <span class="brand">Scooter's Coffee</span>
+              <span class="description">Regional drive-thru competitor - understand best-performing locations</span>
+            </li>
+            <li>
+              <span class="brand">Dunkin'</span>
+              <span class="description">Value-oriented coffee - identify price-sensitive segments</span>
+            </li>
+            <li>
+              <span class="brand">Casey's</span>
+              <span class="description">Appearing in journey data - assess coffee capture rate</span>
+            </li>
+            <li>
+              <span class="brand">7-Eleven</span>
+              <span class="description">Convenience coffee - understand grab-and-go occasions</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="data-category animate-on-scroll">
+          <h4>Anchor Tenant Performance</h4>
+          <ul class="data-list">
+            <li>
+              <span class="brand">Target</span>
+              <span class="description">Strongest co-tenant signal - pull reports for traffic patterns</span>
+            </li>
+            <li>
+              <span class="brand">Costco</span>
+              <span class="description">High cross-shopping - analyze gas station morning patterns</span>
+            </li>
+            <li>
+              <span class="brand">Hy-Vee</span>
+              <span class="description">Regional grocer - understand customer demographics</span>
+            </li>
+            <li>
+              <span class="brand">Walmart</span>
+              <span class="description">Mass market anchor - assess volume differences</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="data-category animate-on-scroll">
+          <h4>QSR Corridor Analysis</h4>
+          <ul class="data-list">
+            <li>
+              <span class="brand">Chick-fil-A</span>
+              <span class="description">Benchmark drive-thru performance and AM traffic</span>
+            </li>
+            <li>
+              <span class="brand">Chipotle</span>
+              <span class="description">Understand lunch/dinner daypart overlap</span>
+            </li>
+            <li>
+              <span class="brand">McDonald's</span>
+              <span class="description">McCafé competitor - assess coffee capture</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="data-category animate-on-scroll">
+          <h4>Complementary Analysis</h4>
+          <ul class="data-list">
+            <li>
+              <span class="brand">Time-of-Day</span>
+              <span class="description">Request hourly data for peak coffee occasions (6-10 AM)</span>
+            </li>
+            <li>
+              <span class="brand">Seasonal</span>
+              <span class="description">Monthly breakdowns for holiday/summer impacts</span>
+            </li>
+            <li>
+              <span class="brand">Loyalty</span>
+              <span class="description">Visit frequency reveals habitual vs. occasional customers</span>
+            </li>
+            <li>
+              <span class="brand">New vs Return</span>
+              <span class="description">Understand market maturation and growth potential</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="logo-icon">🏢</div>
+        <span>Windfield Real Estate</span>
+      </div>
+      <p class="footer-text">Site selection intelligence powered by CenterCheck credit/debit card transaction data. Prepared by Windfield Real Estate, January 2026.</p>
+      <div class="footer-meta">
+        <span>Data Range: Dec 2024 - Nov 2025</span>
+        <span>6 Locations Analyzed</span>
+        <span>Omaha/Elkhorn Market</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add stagger animation delays to stat cards
+    document.querySelectorAll('.stat-card').forEach((card, i) => {
+      card.style.animationDelay = `${0.2 + i * 0.15}s`;
+    });
+  </script>
+</body>
+</html>
