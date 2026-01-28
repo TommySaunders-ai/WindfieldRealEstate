@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windfield Property Profile Schema</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #ffffff; --bg2: #f8fafc; --bg3: #f1f5f9;
+            --text: #1e293b; --text2: #64748b; --text3: #94a3b8;
+            --border: #e2e8f0; --accent: #0ea5e9; --accent2: #0284c7; --accent-light: #e0f2fe;
+            --success: #10b981; --warning: #f59e0b; --error: #ef4444; --info: #3b82f6;
+            --code-bg: #1e293b; --code-text: #e2e8f0;
+            --sidebar: 280px; --header: 60px;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --bg2: #1e293b; --bg3: #334155;
+            --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+            --border: #334155; --accent: #38bdf8; --accent2: #7dd3fc; --accent-light: #0c4a6e;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 1.6; color: var(--text); background: var(--bg); transition: all 0.2s; }
+        
+        .header { position: fixed; top: 0; left: 0; right: 0; height: var(--header); background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1rem; z-index: 100; }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; cursor: pointer; }
+        .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; }
+        .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text); }
+        .menu-btn svg { width: 24px; height: 24px; }
+        .header-center { flex: 1; display: flex; justify-content: center; padding: 0 1rem; }
+        .search-box { position: relative; width: 100%; max-width: 400px; }
+        .search-input { width: 100%; padding: 0.5rem 1rem 0.5rem 2.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); color: var(--text); font-size: 0.875rem; }
+        .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+        .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text3); width: 16px; height: 16px; }
+        .header-right { display: flex; align-items: center; gap: 0.5rem; }
+        .theme-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem; cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .theme-btn:hover { background: var(--bg2); }
+        .theme-btn svg { width: 20px; height: 20px; }
+        .sun { display: none; }
+        .moon { display: block; }
+        [data-theme="dark"] .sun { display: block; }
+        [data-theme="dark"] .moon { display: none; }
+
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 80; }
+        .overlay.open { display: block; }
+        
+        .sidebar { position: fixed; top: var(--header); left: 0; bottom: 0; width: var(--sidebar); background: var(--bg); border-right: 1px solid var(--border); overflow-y: auto; padding: 1.5rem 0; z-index: 90; transition: transform 0.2s; }
+        .nav-section { margin-bottom: 1.5rem; }
+        .nav-title { padding: 0.5rem 1.5rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+        .nav-list { list-style: none; }
+        .nav-link { display: block; padding: 0.5rem 1.5rem; color: var(--text2); text-decoration: none; font-size: 0.875rem; border-left: 3px solid transparent; cursor: pointer; }
+        .nav-link:hover { color: var(--text); background: var(--bg2); }
+        .nav-link.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 500; }
+        .nav-link.nested { padding-left: 2.5rem; font-size: 0.8125rem; }
+        .nav-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0.5rem 1.5rem; background: none; border: none; color: var(--text2); font-size: 0.875rem; cursor: pointer; text-align: left; }
+        .nav-toggle:hover { color: var(--text); background: var(--bg2); }
+        .nav-toggle svg { width: 16px; height: 16px; transition: transform 0.2s; }
+        .nav-toggle.open svg { transform: rotate(90deg); }
+        .nav-group { display: none; }
+        .nav-group.open { display: block; }
+
+        .main { margin-left: var(--sidebar); margin-top: var(--header); min-height: calc(100vh - var(--header)); padding: 2rem; }
+        .content { max-width: 900px; margin: 0 auto; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        h1, h2, h3, h4 { color: var(--text); font-weight: 600; line-height: 1.3; margin-bottom: 1rem; }
+        h1 { font-size: 2rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+        h2 { font-size: 1.5rem; margin-top: 2.5rem; }
+        h3 { font-size: 1.25rem; margin-top: 2rem; }
+        p { margin-bottom: 1rem; color: var(--text2); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { color: var(--accent2); text-decoration: underline; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text2); }
+        li { margin-bottom: 0.5rem; }
+        strong { color: var(--text); font-weight: 600; }
+        code { font-family: 'SF Mono', Menlo, monospace; font-size: 0.875em; background: var(--bg3); padding: 0.2em 0.4em; border-radius: 4px; color: var(--text); }
+        pre { background: var(--code-bg); color: var(--code-text); padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1.5rem; }
+        pre code { background: none; padding: 0; color: inherit; font-size: 0.875rem; line-height: 1.7; }
+
+        .callout { padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+        .callout-icon { width: 20px; height: 20px; flex-shrink: 0; margin-top: 0.125rem; }
+        .callout-content { flex: 1; }
+        .callout-title { font-weight: 600; margin-bottom: 0.25rem; color: var(--text); }
+        .callout-text { font-size: 0.875rem; margin: 0; }
+        .callout.info { background: #dbeafe; border-left: 4px solid var(--info); }
+        .callout.info .callout-icon { color: var(--info); }
+        .callout.warning { background: #fef3c7; border-left: 4px solid var(--warning); }
+        .callout.warning .callout-icon { color: var(--warning); }
+        .callout.success { background: #d1fae5; border-left: 4px solid var(--success); }
+        .callout.success .callout-icon { color: var(--success); }
+        [data-theme="dark"] .callout.info { background: rgba(59,130,246,0.15); }
+        [data-theme="dark"] .callout.warning { background: rgba(245,158,11,0.15); }
+        [data-theme="dark"] .callout.success { background: rgba(16,185,129,0.15); }
+
+        .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; border: 1px solid var(--border); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg3); font-weight: 600; color: var(--text); white-space: nowrap; }
+        td { color: var(--text2); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--bg2); }
+
+        .schema-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden; }
+        .schema-header { background: var(--bg3); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; }
+        .schema-header svg { width: 18px; height: 18px; color: var(--accent); }
+        .schema-content { padding: 1rem; font-family: 'SF Mono', monospace; font-size: 0.8125rem; line-height: 1.8; }
+        .schema-field { display: flex; align-items: flex-start; padding: 0.25rem 0; border-bottom: 1px dashed var(--border); }
+        .schema-field:last-child { border-bottom: none; }
+        .field-name { color: var(--accent); min-width: 200px; flex-shrink: 0; }
+        .field-value { color: var(--text3); flex: 1; }
+
+        .module-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; }
+        .module-card:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .module-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+        .module-num { background: var(--accent); color: white; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; }
+        .module-title { font-weight: 600; color: var(--text); margin: 0; }
+        .module-desc { font-size: 0.875rem; color: var(--text3); margin: 0; }
+
+        .badge { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 4px; text-transform: uppercase; }
+        .badge-req { background: var(--error); color: white; }
+        .badge-opt { background: var(--text3); color: white; }
+        .badge-new { background: var(--success); color: white; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+        .footer { margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--border); text-align: center; color: var(--text3); font-size: 0.875rem; }
+
+        .diagram { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; overflow-x: auto; }
+        .diagram pre { background: transparent; color: var(--text); margin: 0; padding: 0; font-size: 0.75rem; line-height: 1.4; white-space: pre; }
+
+        .code-block { position: relative; margin-bottom: 1.5rem; }
+        .code-header { display: flex; align-items: center; justify-content: space-between; background: var(--bg3); padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; }
+        .code-lang { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text3); }
+        .copy-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 0.25rem; display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; }
+        .copy-btn:hover { color: var(--text); }
+        .copy-btn svg { width: 16px; height: 16px; }
+        .code-block pre { border-radius: 0 0 8px 8px; margin: 0; border: 1px solid var(--border); border-top: none; }
+
+        @media (max-width: 1023px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .menu-btn { display: flex; }
+            .search-box { max-width: 200px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .header-center { display: none; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.25rem; }
+            .main { padding: 1rem; }
+            .field-name { min-width: 140px; font-size: 0.75rem; }
+            .schema-content { font-size: 0.75rem; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        .token-keyword { color: #c792ea; }
+        .token-string { color: #c3e88d; }
+        .token-property { color: #82aaff; }
+        .token-punctuation { color: #89ddff; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="logo" onclick="nav('overview')">
+                <div class="logo-icon">W</div>
+                <span>Windfield Docs</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search..." id="searchInput">
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+                <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-title">Getting Started</div>
+            <ul class="nav-list">
+                <li><a class="nav-link active" onclick="nav('overview')">Overview</a></li>
+                <li><a class="nav-link" onclick="nav('dataflow')">Data Flow Architecture</a></li>
+                <li><a class="nav-link" onclick="nav('structure')">Template Structure</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Module 1</div>
+            <ul class="nav-list">
+                <li>
+                    <button class="nav-toggle open" onclick="toggleNav(this)">
+                        Property Identity
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <div class="nav-group open">
+                        <a class="nav-link nested" onclick="nav('m1-core')">1.1 Core Identification</a>
+                        <a class="nav-link nested" onclick="nav('m1-address')">1.2 Address & Coordinates</a>
+                        <a class="nav-link nested" onclick="nav('m1-business')">1.3 Business Identity</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Module 2</div>
+            <ul class="nav-list">
+                <li>
+                    <button class="nav-toggle" onclick="toggleNav(this)">
+                        Physical Attributes
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <div class="nav-group">
+                        <a class="nav-link nested" onclick="nav('m2-land')">2.1 Land Characteristics</a>
+                        <a class="nav-link nested" onclick="nav('m2-building')">2.2 Building Characteristics</a>
+                        <a class="nav-link nested" onclick="nav('m2-parking')">2.3 Parking & Access</a>
+                        <a class="nav-link nested" onclick="nav('m2-zoning')">2.4 Zoning & Entitlements</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Module 3-5</div>
+            <ul class="nav-list">
+                <li><a class="nav-link" onclick="nav('m3')">3. Location Context</a></li>
+                <li><a class="nav-link" onclick="nav('m4')">4. Market Position</a></li>
+                <li><a class="nav-link" onclick="nav('m5')">5. Demographics</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Module 6-9</div>
+            <ul class="nav-list">
+                <li><a class="nav-link" onclick="nav('m6')">6. Traffic & Accessibility</a></li>
+                <li><a class="nav-link" onclick="nav('m7')">7. Financial Data</a></li>
+                <li><a class="nav-link" onclick="nav('m8')">8. Sales Performance</a></li>
+                <li><a class="nav-link" onclick="nav('m9')">9. Customer Intelligence</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Module 10-14</div>
+            <ul class="nav-list">
+                <li><a class="nav-link" onclick="nav('m10')">10. Competitive Intelligence</a></li>
+                <li><a class="nav-link" onclick="nav('m11')">11. Contacts & Ownership</a></li>
+                <li><a class="nav-link" onclick="nav('m12')">12. Risk Assessment</a></li>
+                <li><a class="nav-link" onclick="nav('m13')">13. Data Quality</a></li>
+                <li><a class="nav-link" onclick="nav('m14')">14. Calculated Metrics</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Integration</div>
+            <ul class="nav-list">
+                <li><a class="nav-link" onclick="nav('dassb')">DASSB Integration</a></li>
+                <li><a class="nav-link" onclick="nav('completeness')">Data Completeness</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="content">
+            <!-- Overview -->
+            <section class="page active" id="overview">
+                <h1>Master Property Profile Schema</h1>
+                <p style="font-size:0.875rem;color:var(--text3);margin-bottom:1rem;">Windfield Real Estate & Development — Standardized Property Data Schema v1.0</p>
+                
+                <div class="callout info">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <div class="callout-content">
+                        <div class="callout-title">The Property Profile as Data Foundation</div>
+                        <p class="callout-text">The Master Property Profile serves as the standardized data container for every location in the Windfield analytical ecosystem.</p>
+                    </div>
+                </div>
+
+                <h2>Purpose</h2>
+                <p>Whether a property is a prospective site, competitor location, client existing location, or benchmark comparable—it receives the same structured data treatment. This enables:</p>
+                <ul>
+                    <li><strong>Apples-to-apples comparison</strong> across disparate property types</li>
+                    <li><strong>Consistent data ingestion</strong> from multiple sources (CoStar, CenterCheck, Google, Census)</li>
+                    <li><strong>Direct feed into the DASSB model</strong> for calculation and scoring</li>
+                    <li><strong>Seamless transition to underwriting</strong> when a site is selected</li>
+                </ul>
+
+                <h2>Property Types Supported</h2>
+                <div class="grid-2">
+                    <div class="module-card" onclick="nav('m1-core')">
+                        <div class="module-header">
+                            <div class="module-num">P</div>
+                            <h4 class="module-title">Prospective Site</h4>
+                        </div>
+                        <p class="module-desc">Available land or space being evaluated for potential acquisition or lease.</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m1-core')">
+                        <div class="module-header">
+                            <div class="module-num">C</div>
+                            <h4 class="module-title">Competitor Location</h4>
+                        </div>
+                        <p class="module-desc">Operating retail location used for competitive intelligence and market analysis.</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m1-core')">
+                        <div class="module-header">
+                            <div class="module-num">E</div>
+                            <h4 class="module-title">Client Existing Location</h4>
+                        </div>
+                        <p class="module-desc">Current operating locations in the client's portfolio for performance tracking.</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m1-core')">
+                        <div class="module-header">
+                            <div class="module-num">B</div>
+                            <h4 class="module-title">Benchmark Comparable</h4>
+                        </div>
+                        <p class="module-desc">Reference properties used for establishing performance benchmarks and projections.</p>
+                    </div>
+                </div>
+
+                <h2>Data Sources</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Source</th><th>Data Types</th><th>Modules</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>CoStar</strong></td><td>Physical attributes, market data, ownership</td><td>1, 2, 3, 4, 7, 11</td></tr>
+                            <tr><td><strong>CenterCheck</strong></td><td>Transaction data, customer intelligence</td><td>8, 9, 10</td></tr>
+                            <tr><td><strong>Google Maps</strong></td><td>Coordinates, ratings, hours</td><td>1, 6</td></tr>
+                            <tr><td><strong>Census / ESRI</strong></td><td>Demographics, population, income</td><td>5</td></tr>
+                            <tr><td><strong>DOT / Traffic</strong></td><td>Vehicle counts, traffic patterns</td><td>6</td></tr>
+                            <tr><td><strong>FEMA</strong></td><td>Flood zones, risk assessments</td><td>12</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- Data Flow -->
+            <section class="page" id="dataflow">
+                <h1>Data Flow Architecture</h1>
+                <p>Understanding how data flows from source systems through the Property Profile and into the DASSB analytical model.</p>
+
+                <h2>Integration Flow Diagram</h2>
+                <div class="diagram">
+                    <pre>┌─────────────────────────────────────────────────────────────────┐
+│                 DATA SOURCES → PROPERTY PROFILE                 │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐        │
+│  │  GOOGLE  │  │  COSTAR  │  │CENTERCHECK│ │  CENSUS  │        │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘        │
+│       │             │             │             │               │
+│       ▼             ▼             ▼             ▼               │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              MASTER PROPERTY PROFILE                     │   │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │   │
+│  │  │ IDENTITY │ │ PHYSICAL │ │  MARKET  │ │PERFORMANCE│   │   │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                            │                                    │
+│                            ▼                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                     DASSB MODEL                          │   │
+│  │          (Calculations, Scoring, Projections)            │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘</pre>
+                </div>
+
+                <h2>Data Processing Pipeline</h2>
+                <ol>
+                    <li><strong>Data Ingestion</strong> — Raw data collected from source systems via APIs</li>
+                    <li><strong>Validation</strong> — Data quality rules ensure completeness and accuracy</li>
+                    <li><strong>Normalization</strong> — Raw metrics transformed into comparable units</li>
+                    <li><strong>Enrichment</strong> — Calculated fields derived from base data</li>
+                    <li><strong>Scoring</strong> — DASSB model applies weighted criteria</li>
+                    <li><strong>Output</strong> — Rankings, projections, and recommendations produced</li>
+                </ol>
+
+                <div class="callout warning">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <div class="callout-content">
+                        <div class="callout-title">Data Freshness Matters</div>
+                        <p class="callout-text">Traffic counts older than 3 years should be flagged for refresh in Module 13 (Data Quality).</p>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- Structure -->
+            <section class="page" id="structure">
+                <h1>Template Structure Overview</h1>
+                <p>The Property Profile is organized into 14 modules, each addressing a specific domain of property data.</p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Module</th><th>Sections</th><th>Primary Sources</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1: Property Identity</strong></td><td>1.1-1.3</td><td>CoStar, Google</td></tr>
+                            <tr><td><strong>2: Physical Attributes</strong></td><td>2.1-2.4</td><td>CoStar</td></tr>
+                            <tr><td><strong>3: Location Context</strong></td><td>3.1-3.4</td><td>CoStar, Census</td></tr>
+                            <tr><td><strong>4: Market Position</strong></td><td>4.1-4.3</td><td>CoStar</td></tr>
+                            <tr><td><strong>5: Demographics</strong></td><td>5.1-5.4</td><td>Census, CenterCheck</td></tr>
+                            <tr><td><strong>6: Traffic & Accessibility</strong></td><td>6.1-6.3</td><td>DOT, Google</td></tr>
+                            <tr><td><strong>7: Financial Data</strong></td><td>7.1-7.4</td><td>CoStar, Public Records</td></tr>
+                            <tr><td><strong>8: Sales Performance</strong></td><td>8.1-8.6</td><td>CenterCheck</td></tr>
+                            <tr><td><strong>9: Customer Intelligence</strong></td><td>9.1-9.4</td><td>CenterCheck</td></tr>
+                            <tr><td><strong>10: Competitive Intelligence</strong></td><td>10.1-10.3</td><td>CenterCheck</td></tr>
+                            <tr><td><strong>11: Contacts & Ownership</strong></td><td>11.1-11.3</td><td>CoStar</td></tr>
+                            <tr><td><strong>12: Risk Assessment</strong></td><td>12.1-12.2</td><td>FEMA</td></tr>
+                            <tr><td><strong>13: Data Quality</strong></td><td>13.1-13.2</td><td>System</td></tr>
+                            <tr><td><strong>14: Calculated Metrics</strong></td><td>14.1-14.3</td><td>DASSB Engine</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>Quick Navigation</h2>
+                <div class="grid-3">
+                    <div class="module-card" onclick="nav('m1-core')">
+                        <div class="module-header"><div class="module-num">1</div><h4 class="module-title">Property Identity</h4></div>
+                        <p class="module-desc">IDs, addresses, coordinates</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m2-land')">
+                        <div class="module-header"><div class="module-num">2</div><h4 class="module-title">Physical</h4></div>
+                        <p class="module-desc">Land, building, parking</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m3')">
+                        <div class="module-header"><div class="module-num">3</div><h4 class="module-title">Location</h4></div>
+                        <p class="module-desc">Geography, proximity</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m4')">
+                        <div class="module-header"><div class="module-num">4</div><h4 class="module-title">Market</h4></div>
+                        <p class="module-desc">Vacancy, rents, comps</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m5')">
+                        <div class="module-header"><div class="module-num">5</div><h4 class="module-title">Demographics</h4></div>
+                        <p class="module-desc">Population, income</p>
+                    </div>
+                    <div class="module-card" onclick="nav('m6')">
+                        <div class="module-header"><div class="module-num">6</div><h4 class="module-title">Traffic</h4></div>
+                        <p class="module-desc">Counts, visibility</p>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M1 Core -->
+            <section class="page" id="m1-core">
+                <h1>1.1 Core Identification</h1>
+                <p>The Core Identification section establishes the unique identity of each property in the Windfield ecosystem.</p>
+
+                <div class="callout info">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <div class="callout-content">
+                        <div class="callout-title">ID Format</div>
+                        <p class="callout-text">Property IDs follow: <code>WF-[STATE]-[SEQUENTIAL]</code> — Example: <code>WF-MO-000147</code></p>
+                    </div>
+                </div>
+
+                <h2>Property Classification</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Enum Values</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy
+                        </button>
+                    </div>
+                    <pre><code><span class="token-property">"Property_Type"</span><span class="token-punctuation">:</span> <span class="token-punctuation">[</span>
+  <span class="token-string">"Prospective Site"</span><span class="token-punctuation">,</span>
+  <span class="token-string">"Competitor Location"</span><span class="token-punctuation">,</span>
+  <span class="token-string">"Client Existing Location"</span><span class="token-punctuation">,</span>
+  <span class="token-string">"Benchmark Comparable"</span>
+<span class="token-punctuation">]</span></code></pre>
+                </div>
+
+                <h2>External Identifiers</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                        External Identifiers Schema
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">CoStar_Property_ID</span><span class="field-value">string — CoStar unique identifier</span></div>
+                        <div class="schema-field"><span class="field-name">Google_Place_ID</span><span class="field-value">string — Google Maps Place ID</span></div>
+                        <div class="schema-field"><span class="field-name">CenterCheck_Location_ID</span><span class="field-value">string — CenterCheck reference</span></div>
+                        <div class="schema-field"><span class="field-name">Parcel_ID</span><span class="field-value">string — County assessor parcel number</span></div>
+                        <div class="schema-field"><span class="field-name">Client_Internal_ID</span><span class="field-value">string — Client's internal reference</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M1 Address -->
+            <section class="page" id="m1-address">
+                <h1>1.2 Address & Coordinates</h1>
+                <p>Complete address information and geographic coordinates for spatial analysis and mapping.</p>
+
+                <h2>Street Address</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        Street Address Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Property_Name</span><span class="field-value">string — Common name or building name</span></div>
+                        <div class="schema-field"><span class="field-name">Street_Address</span><span class="field-value">string — Street number and name</span></div>
+                        <div class="schema-field"><span class="field-name">City</span><span class="field-value">string — City name</span></div>
+                        <div class="schema-field"><span class="field-name">State</span><span class="field-value">string — 2-letter abbreviation</span></div>
+                        <div class="schema-field"><span class="field-name">ZIP_Code</span><span class="field-value">string — 5-digit ZIP code</span></div>
+                        <div class="schema-field"><span class="field-name">County</span><span class="field-value">string — County name</span></div>
+                    </div>
+                </div>
+
+                <h2>Geographic Coordinates</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+                        Coordinates Schema
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Latitude</span><span class="field-value">decimal — WGS84 latitude</span></div>
+                        <div class="schema-field"><span class="field-name">Longitude</span><span class="field-value">decimal — WGS84 longitude</span></div>
+                        <div class="schema-field"><span class="field-name">Geocode_Source</span><span class="field-value">enum — CoStar | Google | Census | Manual</span></div>
+                        <div class="schema-field"><span class="field-name">Geocode_Confidence</span><span class="field-value">enum — High | Medium | Low</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M1 Business -->
+            <section class="page" id="m1-business">
+                <h1>1.3 Business Identity</h1>
+                <p>Business-specific information for operating retail locations.</p>
+
+                <div class="callout warning">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <div class="callout-content">
+                        <div class="callout-title">Operating Locations Only</div>
+                        <p class="callout-text">This section is only populated for properties with <code>Property_Status = "Active/Operating"</code>.</p>
+                    </div>
+                </div>
+
+                <h2>Brand Information</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Brand Information Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Brand_Name</span><span class="field-value">string — Parent brand name</span></div>
+                        <div class="schema-field"><span class="field-name">Brand_Category</span><span class="field-value">string — Business category</span></div>
+                        <div class="schema-field"><span class="field-name">Store_Number</span><span class="field-value">string — Internal store number</span></div>
+                        <div class="schema-field"><span class="field-name">Franchise_Corporate</span><span class="field-value">enum — Franchise | Corporate</span></div>
+                        <div class="schema-field"><span class="field-name">Google_Rating</span><span class="field-value">decimal — Rating (0.0 - 5.0)</span></div>
+                        <div class="schema-field"><span class="field-name">Google_Review_Count</span><span class="field-value">integer — Total reviews</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M2 Land -->
+            <section class="page" id="m2-land">
+                <h1>2.1 Land Characteristics</h1>
+                <p>Physical land attributes including lot size, topography, and utilities.</p>
+
+                <h2>Lot Size</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
+                        Lot Size Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Land_Acres_Gross</span><span class="field-value">decimal — Total land area (AC)</span></div>
+                        <div class="schema-field"><span class="field-name">Land_Acres_Net</span><span class="field-value">decimal — Usable land area (AC)</span></div>
+                        <div class="schema-field"><span class="field-name">Land_SF_Gross</span><span class="field-value">integer — Total land area (SF)</span></div>
+                        <div class="schema-field"><span class="field-name">Land_SF_Net</span><span class="field-value">integer — Usable land area (SF)</span></div>
+                    </div>
+                </div>
+
+                <h2>Site Characteristics</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                        Site Characteristics
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Topography</span><span class="field-value">enum — Level | Sloped | Steep</span></div>
+                        <div class="schema-field"><span class="field-name">Shape</span><span class="field-value">enum — Regular | Irregular | Corner</span></div>
+                        <div class="schema-field"><span class="field-name">Corner_Lot</span><span class="field-value">boolean</span></div>
+                        <div class="schema-field"><span class="field-name">Number_of_Frontages</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Primary_Frontage_Feet</span><span class="field-value">integer — Linear feet</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M2 Building -->
+            <section class="page" id="m2-building">
+                <h1>2.2 Building Characteristics</h1>
+                <p>Building size, construction details, and physical condition.</p>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect></svg>
+                        Building Size Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Building_SF_RBA</span><span class="field-value">integer — Rentable Building Area</span></div>
+                        <div class="schema-field"><span class="field-name">Building_SF_GLA</span><span class="field-value">integer — Gross Leasable Area</span></div>
+                        <div class="schema-field"><span class="field-name">Number_of_Stories</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Year_Built</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Year_Renovated</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Building_Class</span><span class="field-value">enum — A | B | C</span></div>
+                        <div class="schema-field"><span class="field-name">Condition</span><span class="field-value">enum — Excellent | Good | Fair | Poor</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M2 Parking -->
+            <section class="page" id="m2-parking">
+                <h1>2.3 Parking & Access</h1>
+                <p>Parking capacity, configuration, and site access characteristics.</p>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        Parking Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Total_Parking_Spaces</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Parking_Ratio</span><span class="field-value">decimal — per 1,000 SF</span></div>
+                        <div class="schema-field"><span class="field-name">Drive_Through_Lanes</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Drive_Through_Stacking</span><span class="field-value">integer — car capacity</span></div>
+                        <div class="schema-field"><span class="field-name">Ingress_Type</span><span class="field-value">enum — Full Access | Right-In/Out | Signalized</span></div>
+                        <div class="schema-field"><span class="field-name">Traffic_Signal_Controlled</span><span class="field-value">boolean</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M2 Zoning -->
+            <section class="page" id="m2-zoning">
+                <h1>2.4 Zoning & Entitlements</h1>
+                <p>Zoning classifications and permitted uses.</p>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        Zoning Fields
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Zoning_Code</span><span class="field-value">string — Municipal code</span></div>
+                        <div class="schema-field"><span class="field-name">Zoning_Category</span><span class="field-value">enum — Commercial | Mixed Use | Industrial | PUD</span></div>
+                        <div class="schema-field"><span class="field-name">Retail_Permitted</span><span class="field-value">enum — Yes | No | Conditional</span></div>
+                        <div class="schema-field"><span class="field-name">Drive_Through_Permitted</span><span class="field-value">enum — Yes | No | Conditional</span></div>
+                        <div class="schema-field"><span class="field-name">Max_Building_Height</span><span class="field-value">integer — feet</span></div>
+                        <div class="schema-field"><span class="field-name">Opportunity_Zone</span><span class="field-value">boolean</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M3 -->
+            <section class="page" id="m3">
+                <h1>Module 3: Location Context</h1>
+                <p>Market geography, proximity analysis, and competitive positioning.</p>
+
+                <h2>3.1 Market Geography</h2>
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon></svg>
+                        Market Hierarchy
+                    </div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Market</span><span class="field-value">string — Primary market name</span></div>
+                        <div class="schema-field"><span class="field-name">Submarket</span><span class="field-value">string — Submarket name</span></div>
+                        <div class="schema-field"><span class="field-name">Location_Type</span><span class="field-value">enum — Urban Core | Urban | Suburban | Rural</span></div>
+                        <div class="schema-field"><span class="field-name">Walk_Score</span><span class="field-value">integer — 0-100</span></div>
+                        <div class="schema-field"><span class="field-name">Transit_Score</span><span class="field-value">integer — 0-100</span></div>
+                    </div>
+                </div>
+
+                <h2>3.4 Competitive Proximity</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Distance</th><th>Pressure</th><th>Implication</th></tr></thead>
+                        <tbody>
+                            <tr><td>&lt; 0.5 mi</td><td><span class="badge badge-req">Very High</span></td><td>Direct competition</td></tr>
+                            <tr><td>0.5 - 1.0 mi</td><td><span class="badge" style="background:var(--warning);color:white;">High</span></td><td>Shared trade area</td></tr>
+                            <tr><td>1.0 - 1.5 mi</td><td><span class="badge badge-new">Optimal</span></td><td>Validated demand</td></tr>
+                            <tr><td>1.5 - 2.0 mi</td><td><span class="badge badge-opt">Moderate</span></td><td>Partial overlap</td></tr>
+                            <tr><td>&gt; 2.0 mi</td><td><span class="badge" style="background:var(--info);color:white;">Low</span></td><td>Independent areas</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- M4-M14 Summary Pages -->
+            <section class="page" id="m4">
+                <h1>Module 4: Market Position</h1>
+                <p>Vacancy rates, asking rents, and comparable properties.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>Market Conditions</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Subject_Vacancy</span><span class="field-value">decimal — Current %</span></div>
+                        <div class="schema-field"><span class="field-name">Submarket_Vacancy</span><span class="field-value">decimal — Submarket %</span></div>
+                        <div class="schema-field"><span class="field-name">Asking_Rent_PSF</span><span class="field-value">currency — $/SF</span></div>
+                        <div class="schema-field"><span class="field-name">Cap_Rate_Avg</span><span class="field-value">decimal — Market cap rate</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m5">
+                <h1>Module 5: Demographics</h1>
+                <p>Trade area population, income, age distribution, and consumer spending.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Population by Ring</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Population_1mi</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Population_3mi</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Population_5mi</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Median_HH_Income</span><span class="field-value">currency — by ring</span></div>
+                        <div class="schema-field"><span class="field-name">Median_Age</span><span class="field-value">decimal</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m6">
+                <h1>Module 6: Traffic & Accessibility</h1>
+                <p>Traffic counts, visibility assessment, and signage entitlements.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Traffic Count Fields</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Primary_Street_VPD</span><span class="field-value">integer — Vehicles Per Day</span></div>
+                        <div class="schema-field"><span class="field-name">Secondary_Street_VPD</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Combined_VPD</span><span class="field-value">integer — Total frontage</span></div>
+                        <div class="schema-field"><span class="field-name">Visibility_Score</span><span class="field-value">integer — 0-10</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m7">
+                <h1>Module 7: Financial Data</h1>
+                <p>Pricing, sale history, loans, and tax assessments.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>Financial Fields</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Asking_Price</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Price_Per_SF</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Last_Sale_Price</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Last_Sale_Date</span><span class="field-value">date</span></div>
+                        <div class="schema-field"><span class="field-name">Total_Assessed_Value</span><span class="field-value">currency</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m8">
+                <h1>Module 8: Sales Performance</h1>
+                <p>CenterCheck transaction data and performance metrics.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Performance Summary</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Card_Sales</span><span class="field-value">currency — Annual</span></div>
+                        <div class="schema-field"><span class="field-name">Card_Sales_YoY</span><span class="field-value">decimal — % change</span></div>
+                        <div class="schema-field"><span class="field-name">Transactions</span><span class="field-value">integer — Annual count</span></div>
+                        <div class="schema-field"><span class="field-name">Avg_Order_Value</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Unique_Customers</span><span class="field-value">integer</span></div>
+                        <div class="schema-field"><span class="field-name">Brand_Rank_Pct</span><span class="field-value">decimal — Percentile</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m9">
+                <h1>Module 9: Customer Intelligence</h1>
+                <p>Shopper demographics, journey patterns, and competitive matrix.</p>
+                <div class="callout success">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div class="callout-content">
+                        <div class="callout-title">Key Insight</div>
+                        <p class="callout-text">When shoppers are higher income than residents, the location is "punching above its weight" — indicating strong brand pull.</p>
+                    </div>
+                </div>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Shopper Demographics</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Shopper_Median_Income</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Resident_Median_Income</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Income_Variance_Pct</span><span class="field-value">decimal</span></div>
+                        <div class="schema-field"><span class="field-name">Trip_Type</span><span class="field-value">enum — Destination | Convenience | Trip-Chain</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m10">
+                <h1>Module 10: Competitive Intelligence</h1>
+                <p>Performance comparison against nearby competitors.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>Competitor Comparison</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Competitor_Name</span><span class="field-value">string</span></div>
+                        <div class="schema-field"><span class="field-name">Distance_Miles</span><span class="field-value">decimal</span></div>
+                        <div class="schema-field"><span class="field-name">Card_Sales</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">YoY_Growth</span><span class="field-value">decimal</span></div>
+                        <div class="schema-field"><span class="field-name">Performance_vs_Nearby</span><span class="field-value">enum — Above | Average | Below</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m11">
+                <h1>Module 11: Contacts & Ownership</h1>
+                <p>Ownership information and key contacts.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Ownership Fields</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Owner_Name</span><span class="field-value">string</span></div>
+                        <div class="schema-field"><span class="field-name">Owner_Type</span><span class="field-value">enum — Individual | Company | REIT | PE</span></div>
+                        <div class="schema-field"><span class="field-name">Owner_Since</span><span class="field-value">date</span></div>
+                        <div class="schema-field"><span class="field-name">Leasing_Contact</span><span class="field-value">string</span></div>
+                        <div class="schema-field"><span class="field-name">Leasing_Phone</span><span class="field-value">string</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m12">
+                <h1>Module 12: Risk Assessment</h1>
+                <p>Flood risk, environmental, and other risk factors.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Risk Fields</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">FEMA_Flood_Zone</span><span class="field-value">string</span></div>
+                        <div class="schema-field"><span class="field-name">In_SFHA</span><span class="field-value">boolean — Special Flood Hazard Area</span></div>
+                        <div class="schema-field"><span class="field-name">Flood_Insurance_Required</span><span class="field-value">enum — Yes | No | Unknown</span></div>
+                        <div class="schema-field"><span class="field-name">Phase_I_ESA_Completed</span><span class="field-value">boolean</span></div>
+                        <div class="schema-field"><span class="field-name">Known_Contamination</span><span class="field-value">boolean</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m13">
+                <h1>Module 13: Data Quality</h1>
+                <p>Data source tracking and quality flags.</p>
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Data Quality Fields</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Profile_Created_Date</span><span class="field-value">date</span></div>
+                        <div class="schema-field"><span class="field-name">Profile_Last_Updated</span><span class="field-value">date</span></div>
+                        <div class="schema-field"><span class="field-name">Data_Completeness_Score</span><span class="field-value">decimal — % populated</span></div>
+                        <div class="schema-field"><span class="field-name">Traffic_Data_Outdated</span><span class="field-value">boolean — &gt; 3 years</span></div>
+                        <div class="schema-field"><span class="field-name">Field_Visit_Completed</span><span class="field-value">boolean</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <section class="page" id="m14">
+                <h1>Module 14: Calculated Metrics</h1>
+                <p>DASSB model outputs — normalization, scoring, and projections.</p>
+
+                <div class="callout info">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <div class="callout-content">
+                        <div class="callout-title">DASSB Engine Outputs</div>
+                        <p class="callout-text">All fields are calculated by the DASSB model from raw data in Modules 1-13.</p>
+                    </div>
+                </div>
+
+                <div class="schema-box">
+                    <div class="schema-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Scoring Outputs</div>
+                    <div class="schema-content">
+                        <div class="schema-field"><span class="field-name">Sales_Per_Capita</span><span class="field-value">currency — Normalized</span></div>
+                        <div class="schema-field"><span class="field-name">Composite_Score</span><span class="field-value">integer — 0-100</span></div>
+                        <div class="schema-field"><span class="field-name">Site_Tier</span><span class="field-value">enum — 1A | 1B | 2 | 3</span></div>
+                        <div class="schema-field"><span class="field-name">Projected_Revenue_Y1</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Projected_Revenue_Y2</span><span class="field-value">currency</span></div>
+                        <div class="schema-field"><span class="field-name">Projection_Confidence</span><span class="field-value">enum — High | Medium | Low</span></div>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- DASSB -->
+            <section class="page" id="dassb">
+                <h1>DASSB Model Integration</h1>
+                <p>How the Property Profile feeds into the DASSB analytical model.</p>
+
+                <h2>Scoring Weights</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Criterion</th><th>Weight</th><th>Rationale</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>YoY Sales Growth</strong></td><td>25%</td><td>Strongest predictor</td></tr>
+                            <tr><td><strong>AOV/Revenue Potential</strong></td><td>20%</td><td>Financial capacity</td></tr>
+                            <tr><td><strong>Brand Rank</strong></td><td>20%</td><td>Competitive strength</td></tr>
+                            <tr><td><strong>Customer Growth</strong></td><td>15%</td><td>Market momentum</td></tr>
+                            <tr><td><strong>Trade Area Quality</strong></td><td>10%</td><td>Geographic efficiency</td></tr>
+                            <tr><td><strong>Concentration Risk</strong></td><td>10%</td><td>Dependency risk</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+
+            <!-- Completeness -->
+            <section class="page" id="completeness">
+                <h1>Data Completeness Requirements</h1>
+                <p>Required modules vary by property type.</p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Property Type</th><th>Required Modules</th><th>Optional</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Prospective Site</strong></td><td>1, 2, 3, 5, 6, 7, 12</td><td>4, 11</td></tr>
+                            <tr><td><strong>Competitor</strong></td><td>1, 2, 3, 5, 6, 8, 9, 10</td><td>4, 7, 11, 12</td></tr>
+                            <tr><td><strong>Client Existing</strong></td><td>1, 2, 3, 5, 6, 7, 8, 9, 11</td><td>4, 10, 12</td></tr>
+                            <tr><td><strong>Benchmark</strong></td><td>1, 3, 5, 6, 8</td><td>2, 4, 7, 9-12</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="callout warning">
+                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <div class="callout-content">
+                        <div class="callout-title">Minimum Completeness</div>
+                        <p class="callout-text">Properties with less than 60% completeness in required modules should be flagged for additional data collection.</p>
+                    </div>
+                </div>
+                <footer class="footer">Windfield Real Estate & Development — Property Profile Schema Documentation</footer>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Theme management
+        const themeBtn = document.getElementById('themeBtn');
+        const savedTheme = localStorage.getItem('windfield-theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        themeBtn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('windfield-theme', next);
+        });
+
+        // Mobile menu
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        // Navigation
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            document.querySelectorAll(`[onclick="nav('${id}')"]`).forEach(l => l.classList.add('active'));
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            window.scrollTo(0, 0);
+        }
+
+        // Nav group toggle
+        function toggleNav(btn) {
+            btn.classList.toggle('open');
+            const group = btn.nextElementSibling;
+            if (group) group.classList.toggle('open');
+        }
+
+        // Search
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const match = link.textContent.toLowerCase().includes(q);
+                link.style.display = q === '' || match ? '' : 'none';
+            });
+        });
+
+        // Copy code
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
